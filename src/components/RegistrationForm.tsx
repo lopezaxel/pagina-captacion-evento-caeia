@@ -1,0 +1,254 @@
+import { useMemo, useState, type FormEvent } from 'react'
+import { content } from '../content'
+import { calendarUrl, dateLabel, fill } from '../lib'
+import { InlineCountdown } from './CountdownBar'
+import { Icon } from './ui'
+
+/** Bandera de Argentina simplificada (los emojis de banderas no se ven en Windows). */
+function FlagAR() {
+  return (
+    <svg className="flag" width="22" height="16" viewBox="0 0 22 16" aria-hidden="true">
+      <rect width="22" height="16" rx="3" fill="#fff" />
+      <path d="M0 3a3 3 0 0 1 3-3h16a3 3 0 0 1 3 3v2.4H0Z" fill="#74acdf" />
+      <path d="M0 10.6h22V13a3 3 0 0 1-3 3H3a3 3 0 0 1-3-3Z" fill="#74acdf" />
+      <circle cx="11" cy="8" r="1.7" fill="#f6b40e" />
+    </svg>
+  )
+}
+
+/** Deja solo el número nacional de 10 dígitos (código de área + número): saca 54, 0 y el 9 de WhatsApp. */
+function nationalNumber(raw: string): string {
+  let d = raw.replace(/\D/g, '')
+  if (d.startsWith('54') && d.length > 10) d = d.slice(2)
+  if (d.startsWith('0')) d = d.slice(1)
+  if (d.startsWith('9') && d.length === 11) d = d.slice(1)
+  return d
+}
+
+type Values = {
+  nombre: string
+  whatsapp: string
+  tipo: string
+  consent: boolean
+  email: string
+  rubro: string
+  facturas: string
+  como: string
+  tarea: string
+}
+type Errors = Partial<Record<'nombre' | 'whatsapp' | 'tipo' | 'email' | 'consent', string>>
+
+const EMPTY: Values = { nombre: '', whatsapp: '', tipo: '', consent: false, email: '', rubro: '', facturas: '', como: '', tarea: '' }
+const f = content.form
+const e = content.event
+
+function validate(v: Values): Errors {
+  const errors: Errors = {}
+  if (v.nombre.trim().length < 2) errors.nombre = f.errors.nombre
+  if (nationalNumber(v.whatsapp).length !== 10) errors.whatsapp = f.errors.whatsapp
+  if (!v.tipo) errors.tipo = f.errors.tipo
+  if (!v.email.trim()) {
+    if (f.emailRequired) errors.email = f.errors.emailRequired
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email.trim())) {
+    errors.email = f.errors.email
+  }
+  if (!v.consent) errors.consent = f.errors.consent
+  return errors
+}
+
+export function RegistrationForm({ id }: { id: string }) {
+  const [values, setValues] = useState<Values>(EMPTY)
+  const [errors, setErrors] = useState<Errors>({})
+  const [status, setStatus] = useState<'idle' | 'sending' | 'done'>('idle')
+  const origin = useMemo(() => new URLSearchParams(window.location.search).get('o') ?? '', [])
+
+  const set = <K extends keyof Values>(key: K, value: Values[K]) => {
+    setValues((prev) => ({ ...prev, [key]: value }))
+    if (key in errors) setErrors((prev) => ({ ...prev, [key]: undefined }))
+  }
+
+  function onSubmit(ev: FormEvent) {
+    ev.preventDefault()
+    const found = validate(values)
+    setErrors(found)
+    if (Object.keys(found).length > 0) return
+    setStatus('sending')
+    // PROTOTIPO: la inscripción todavía no se guarda en ningún lado. Acá va la llamada a Supabase.
+    // Al guardar, usar `+54${nationalNumber(values.whatsapp)}`. Ojo: los links wa.me de Argentina llevan 549 + número.
+    if (import.meta.env.DEV) {
+      console.info('[prototipo] inscripción simulada', {
+        ...values,
+        whatsapp: `+54${nationalNumber(values.whatsapp)}`,
+        origen: origin || null,
+      })
+    }
+    window.setTimeout(() => setStatus('done'), 700)
+  }
+
+  if (status === 'done') {
+    const firstName = values.nombre.trim().split(/\s+/)[0]
+    const s = f.success
+    return (
+      <div className="glass glass--glow form form--done" id={id}>
+        <span className="done__icon">
+          <Icon name="check" size={28} />
+        </span>
+        <h3>{fill(s.title, { nombre: firstName })}</h3>
+        <p className="muted">{fill(s.text, { fecha: dateLabel, lugar: e.venueShort })}</p>
+        <div className="done__actions">
+          <a className="btn btn--ghost" href={calendarUrl()} target="_blank" rel="noreferrer">
+            <Icon name="calendar" size={20} />
+            {s.calendar}
+          </a>
+          {e.whatsappGroupUrl ? (
+            <a className="btn" href={e.whatsappGroupUrl} target="_blank" rel="noreferrer">
+              <Icon name="message" size={20} />
+              {s.whatsapp}
+            </a>
+          ) : (
+            import.meta.env.DEV && (
+              <span className="dev-note">[solo en desarrollo] Falta el link del grupo de WhatsApp en content.ts</span>
+            )
+          )}
+        </div>
+        {(e.whatsappGroupUrl || import.meta.env.DEV) && <p className="tiny">{s.whatsappNote}</p>}
+      </div>
+    )
+  }
+
+  const fid = (name: string) => `${id}-${name}`
+  const sending = status === 'sending'
+
+  return (
+    <form className="glass glass--glow form" id={id} onSubmit={onSubmit} noValidate>
+      <div className="form__head">
+        <h3>{f.title}</h3>
+        <p className="muted">{f.subtitle}</p>
+      </div>
+
+      <div className="field">
+        <label htmlFor={fid('nombre')}>{f.labels.nombre}</label>
+        <input
+          id={fid('nombre')}
+          type="text"
+          autoComplete="name"
+          placeholder={f.placeholders.nombre}
+          value={values.nombre}
+          onChange={(ev) => set('nombre', ev.target.value)}
+          aria-invalid={!!errors.nombre}
+        />
+        {errors.nombre && <span className="error">{errors.nombre}</span>}
+      </div>
+
+      <div className="field">
+        <label htmlFor={fid('whatsapp')}>{f.labels.whatsapp}</label>
+        <div className="phone">
+          <span className="phone__cc" aria-hidden="true">
+            <FlagAR />
+            +54
+          </span>
+          <input
+            id={fid('whatsapp')}
+            type="tel"
+            inputMode="numeric"
+            autoComplete="tel-national"
+            placeholder={f.placeholders.whatsapp}
+            value={values.whatsapp}
+            onChange={(ev) => set('whatsapp', ev.target.value)}
+            aria-invalid={!!errors.whatsapp}
+            aria-describedby={fid('whatsapp-hint')}
+          />
+        </div>
+        {errors.whatsapp ? (
+          <span className="error" id={fid('whatsapp-hint')}>
+            {errors.whatsapp}
+          </span>
+        ) : (
+          <span className="hint" id={fid('whatsapp-hint')}>
+            {f.hints.whatsapp}
+          </span>
+        )}
+      </div>
+
+      <div className="field">
+        <label htmlFor={fid('email')}>{f.emailRequired ? f.labels.email : f.labels.emailOptional}</label>
+        <input
+          id={fid('email')}
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          placeholder={f.placeholders.email}
+          value={values.email}
+          onChange={(ev) => set('email', ev.target.value)}
+          aria-invalid={!!errors.email}
+        />
+        {errors.email && <span className="error">{errors.email}</span>}
+      </div>
+
+      <div className="field">
+        <label htmlFor={fid('tipo')}>{f.labels.tipo}</label>
+        <select id={fid('tipo')} value={values.tipo} onChange={(ev) => set('tipo', ev.target.value)} aria-invalid={!!errors.tipo}>
+          <option value="">Elegí una opción</option>
+          {f.tipos.map((t) => (
+            <option key={t}>{t}</option>
+          ))}
+        </select>
+        {errors.tipo && <span className="error">{errors.tipo}</span>}
+      </div>
+
+      {
+        <details className="more">
+          <summary>
+            <Icon name="plus" size={18} />
+            {f.moreToggle}
+          </summary>
+          <div className="more__body">
+            <div className="field">
+              <label htmlFor={fid('rubro')}>{f.labels.rubro}</label>
+              <input id={fid('rubro')} type="text" placeholder={f.placeholders.rubro} value={values.rubro} onChange={(ev) => set('rubro', ev.target.value)} />
+            </div>
+            <div className="field">
+              <label htmlFor={fid('facturas')}>{f.labels.facturas}</label>
+              <select id={fid('facturas')} value={values.facturas} onChange={(ev) => set('facturas', ev.target.value)}>
+                <option value="">Elegí una opción</option>
+                {f.facturas.map((t) => (
+                  <option key={t}>{t}</option>
+                ))}
+              </select>
+            </div>
+            <div className="field">
+              <label htmlFor={fid('como')}>{f.labels.como}</label>
+              <select id={fid('como')} value={values.como} onChange={(ev) => set('como', ev.target.value)}>
+                <option value="">Elegí una opción</option>
+                {f.como.map((t) => (
+                  <option key={t}>{t}</option>
+                ))}
+              </select>
+            </div>
+            <div className="field">
+              <label htmlFor={fid('tarea')}>{f.labels.tarea}</label>
+              <textarea id={fid('tarea')} rows={3} placeholder={f.placeholders.tarea} value={values.tarea} onChange={(ev) => set('tarea', ev.target.value)} />
+            </div>
+          </div>
+        </details>
+      }
+
+      <div className="field">
+        <label className="check" htmlFor={fid('consent')}>
+          <input id={fid('consent')} type="checkbox" checked={values.consent} onChange={(ev) => set('consent', ev.target.checked)} aria-invalid={!!errors.consent} />
+          <span>
+            {f.consent} <a href={`#${content.privacy.id}`}>{f.privacyLink}</a>
+          </span>
+        </label>
+        {errors.consent && <span className="error">{errors.consent}</span>}
+      </div>
+
+      <button className="btn btn--block" type="submit" disabled={sending}>
+        {sending ? f.sending : f.submit}
+        {!sending && <Icon name="arrow" size={20} />}
+      </button>
+      <InlineCountdown />
+      <p className="reassure">{f.reassurance}</p>
+    </form>
+  )
+}
