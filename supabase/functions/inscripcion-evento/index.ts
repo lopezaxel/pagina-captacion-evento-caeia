@@ -135,16 +135,20 @@ Deno.serve(async (req) => {
 
     // --- Guardar. Si el WhatsApp o el mail ya estaban, no se duplica y se responde igual que si fuera nuevo
     //     (así nadie puede averiguar quién está anotado). ---
-    await sql`
+    const filas = await sql<{ encuesta_token: string }[]>`
       insert into evento_caeia.inscripciones
         (nombre, whatsapp, email, tipo, rubro, facturas_por_mes, como_factura_hoy, tarea_repetitiva,
          origen, consentimiento, consentimiento_texto)
       values
         (${nombre}, ${whatsapp}, ${email}, ${tipo}, ${rubro}, ${facturas || null}, ${como || null}, ${tarea},
          ${origen}, true, ${consentimientoTexto})
-      on conflict do nothing`
+      on conflict do nothing
+      returning encuesta_token`
 
-    return reply(200, { ok: true }, origin)
+    // Código para enlazar la encuesta opcional. Si la persona ya estaba anotada se devuelve uno al azar que no
+    // corresponde a ninguna fila: así la respuesta es idéntica y nadie puede averiguar quién está anotado.
+    const token = filas[0]?.encuesta_token ?? crypto.randomUUID()
+    return reply(200, { ok: true, token }, origin)
   } catch (err) {
     // Nunca se registran los datos de la persona, solo el tipo de error.
     console.error('inscripcion-evento: error al guardar', err instanceof Error ? err.name : 'desconocido')

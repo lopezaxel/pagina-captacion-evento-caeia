@@ -1440,6 +1440,105 @@ select option {
   color: var(--text);
 }
 
+/* ---------- Encuesta opcional (pantalla de confirmación) ---------- */
+.survey {
+  display: grid;
+  gap: 18px;
+  margin-top: 26px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  text-align: left;
+}
+.survey h4 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+.survey__intro {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.5;
+}
+.survey__q {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.survey__q legend,
+.survey__legend {
+  padding: 0;
+  font-size: 15.5px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.survey__opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.survey__opt {
+  position: relative;
+  cursor: pointer;
+}
+.survey__opt input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.survey__opt span {
+  display: block;
+  padding: 9px 15px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.25;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+.survey__opt:hover span {
+  background: rgba(255, 255, 255, 0.1);
+}
+.survey__opt.is-on span {
+  border-color: rgba(167, 139, 250, 0.9);
+  background: rgba(139, 92, 246, 0.35);
+  color: #fff;
+  font-weight: 600;
+}
+.survey__opt:focus-within span {
+  outline: 2px solid var(--blue-soft);
+  outline-offset: 2px;
+}
+.survey__privacy {
+  text-align: center;
+}
+.survey--done {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.survey--done p {
+  font-size: 16.5px;
+  font-weight: 500;
+}
+.survey__ok {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: var(--blue-soft);
+  background: rgba(14, 165, 233, 0.14);
+  border: 1px solid rgba(14, 165, 233, 0.5);
+}
+
 /* ---------- Páginas legales (/privacidad y /terminos) ---------- */
 .legal__top {
   display: flex;

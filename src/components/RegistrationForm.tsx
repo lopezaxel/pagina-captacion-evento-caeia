@@ -2,6 +2,7 @@ import { useMemo, useState, type FormEvent } from 'react'
 import { content } from '../content'
 import { calendarUrl, dateLabel, fill } from '../lib'
 import { InlineCountdown } from './CountdownBar'
+import { Survey } from './Survey'
 import { Icon } from './ui'
 
 /** Bandera de Argentina simplificada (los emojis de banderas no se ven en Windows). */
@@ -57,6 +58,7 @@ export function RegistrationForm({ id }: { id: string }) {
   const [errors, setErrors] = useState<Errors>({})
   const [status, setStatus] = useState<'idle' | 'sending' | 'done'>('idle')
   const [sendError, setSendError] = useState('')
+  const [surveyToken, setSurveyToken] = useState<string | null>(null)
   const origin = useMemo(() => new URLSearchParams(window.location.search).get('o') ?? '', [])
 
   const set = <K extends keyof Values>(key: K, value: Values[K]) => {
@@ -112,6 +114,9 @@ export function RegistrationForm({ id }: { id: string }) {
         }),
       })
       if (res.ok) {
+        // El servidor devuelve un código para enlazar la encuesta opcional (ver Survey.tsx).
+        const data = (await res.json().catch(() => ({}))) as { token?: string }
+        setSurveyToken(typeof data.token === 'string' ? data.token : null)
         setStatus('done')
         return
       }
@@ -149,6 +154,7 @@ export function RegistrationForm({ id }: { id: string }) {
           )}
         </div>
         {(e.whatsappGroupUrl || import.meta.env.DEV) && <p className="tiny">{s.whatsappNote}</p>}
+        {(surveyToken || import.meta.env.DEV) && <Survey token={surveyToken} />}
       </div>
     )
   }

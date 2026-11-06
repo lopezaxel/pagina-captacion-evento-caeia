@@ -302,6 +302,64 @@ export const content = {
     },
   },
 
+  // Encuesta opcional que aparece en la pantalla de confirmación, después de inscribirse (idea de Axel, 2026-11-05; armada
+  // el 2026-11-06). Tono suave y sin nombrar ni poner precios de la competencia. Todas las preguntas son opcionales.
+  // PENDIENTE: Axel todavía no confirmó las opciones ni los rangos de precio (son una propuesta para ajustar).
+  // IMPORTANTE: si se cambian las opciones, cambiarlas también en supabase/functions/encuesta-evento/index.ts (si no, la
+  // función rechaza las respuestas) y volver a desplegar esa función.
+  survey: {
+    title: 'Ayudanos con tu opinión',
+    intro:
+      'En el evento vamos a hacer el lanzamiento de CAEIA, una app pensada para que facturar en ARCA sea más fácil. ¡Queremos tu opinión!',
+    note: 'Es opcional y lleva menos de 1 minuto.',
+    questions: [
+      {
+        id: 'molestia',
+        label: '¿Qué es lo que más te molesta de facturar hoy?',
+        options: [
+          'Me lleva mucho tiempo',
+          'Es complicado y me confundo',
+          'Dependo de mi contador',
+          'Los errores y las correcciones',
+          'Cuando ARCA no funciona',
+          'Nada, no me molesta',
+        ],
+      },
+      {
+        id: 'gasto_mensual',
+        label: '¿Cuánto gastás por mes en facturar? (contador, app o sistema)',
+        options: ['Nada', 'Menos de $10.000', 'Entre $10.000 y $30.000', 'Más de $30.000', 'No sé'],
+      },
+      {
+        id: 'precio_justo',
+        label: '¿Cuánto te parecería justo pagar por mes por una app como esta?',
+        options: [
+          'Menos de $10.000',
+          'Entre $10.000 y $20.000',
+          'Entre $20.000 y $30.000',
+          'Entre $30.000 y $50.000',
+          'Más de $50.000',
+          'No pagaría',
+        ],
+      },
+      {
+        id: 'probaria_con_tarjeta',
+        label: '¿Probarías la app 10 días gratis si te piden la tarjeta?',
+        options: ['Sí', 'Tal vez', 'No'],
+      },
+    ],
+    open: {
+      id: 'imprescindible',
+      label: '¿Qué tendría que tener sí o sí para que la uses?',
+      placeholder: 'Contanos con tus palabras',
+    },
+    privacy: 'Usamos tus respuestas solo para ajustar la app.',
+    submit: 'Enviar mi opinión',
+    sending: 'Enviando…',
+    thanks: '¡Gracias! Tu opinión nos ayuda a ajustar la app antes del lanzamiento.',
+    error: 'No pudimos enviar tus respuestas. Probá de nuevo en un momento.',
+  },
+
   // Pie de página: resumen + leyenda obligatoria (Disposición DNPDP 10/2008, hoy a cargo de la AAIP) + links a las dos páginas.
   privacy: {
     id: 'privacidad',
@@ -350,9 +408,10 @@ export const content = {
             'El tipo de persona que elegiste en «Soy…» (por ejemplo, dueño de negocio o emprendedor).',
             'El origen del link por el que llegaste (por ejemplo, Instagram), cuando viene en la dirección.',
             'La fecha y hora de tu inscripción y el texto del consentimiento que aceptaste.',
+            'Si querés, tus respuestas a una encuesta opcional sobre CAEIA (qué te molesta de facturar, cuánto gastás y cuánto pagarías).',
           ],
           p: [
-            'Todos son obligatorios: sin ellos no podemos anotarte. No pedimos datos sensibles, clave fiscal ni datos bancarios.',
+            'Los datos de la inscripción son obligatorios: sin ellos no podemos anotarte. La encuesta es opcional. No pedimos datos sensibles, clave fiscal ni datos bancarios.',
             'Para evitar abusos en el formulario guardamos un código irreversible derivado de tu dirección IP, no la dirección en sí. Ese código se descarta al día siguiente.',
           ],
         },
@@ -362,6 +421,7 @@ export const content = {
             'Confirmar tu inscripción y organizar el evento (lista de asistentes e ingreso).',
             'Avisarte por WhatsApp y por mail sobre el evento: recordatorios y cambios.',
             'Contarte las novedades del lanzamiento de CAEIA, porque lo aceptaste al inscribirte.',
+            'Si respondés la encuesta opcional, usar tus respuestas para ajustar CAEIA y su precio antes del lanzamiento.',
             'Sumarte al grupo de WhatsApp del evento, si vos lo pedís. Es voluntario.',
             'Hacer estadísticas internas (cuántas personas se anotaron y de qué tipo).',
           ],
