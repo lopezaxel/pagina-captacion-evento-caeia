@@ -1,7 +1,7 @@
 import { content } from '../content'
 import { address, agendaRows, fill } from '../lib'
 import { RegistrationForm } from './RegistrationForm'
-import { Heading, Icon, PartnerLogo, Partners, Reveal, Wordmark } from './ui'
+import { Heading, Icon, PartnerLogo, Partners, Reveal, Rich, Wordmark } from './ui'
 
 const e = content.event
 
@@ -17,7 +17,10 @@ export function Hero() {
         <div className="hero__copy">
           <p className="pill">
             <span className="pill__dot" />
-            {h.pill}
+            <span>
+              {h.pill.before}
+              <b>{h.pill.highlight}</b>
+            </span>
           </p>
 
           <div className="datecard glass glass--blue" aria-label={`${e.weekday} ${e.day} de noviembre`}>
@@ -38,8 +41,9 @@ export function Hero() {
           <p className="dateline">{h.dateLine}</p>
           <ul className="chips">
             {h.chips.map((c) => (
-              <li key={c} className="chip glass">
-                {fill(c)}
+              <li key={c.text} className="chip glass">
+                <Icon name={c.icon} size={17} />
+                {fill(c.text)}
               </li>
             ))}
           </ul>
@@ -94,6 +98,35 @@ export function Facts() {
   )
 }
 
+export function ForYou() {
+  const f = content.forYou
+  return (
+    <section className="section section--light">
+      <div className="container">
+        <Reveal>
+          <div className="glass glass--violet foryou">
+            <Heading kicker={f.kicker} title={f.title} intro={f.intro} />
+            <div className="foryou__groups">
+              {f.groups.map((g) => (
+                <div key={g.label}>
+                  <p className="foryou__label">{g.label}</p>
+                  <ul className="tags">
+                    {g.items.map((item) => (
+                      <li key={item.text} className={`tag tag--${g.tone}${item.open ? ' tag--open' : ''}`}>
+                        {item.text}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
 export function Problem() {
   const p = content.problem
   return (
@@ -102,7 +135,19 @@ export function Problem() {
         <Reveal>
           <div className="glass glass--violet statement">
             <p className="kicker">{p.kicker}</p>
-            <h2 className="statement__title">{p.title}</h2>
+            <h2 className="statement__title">
+              <Rich text={p.title} />
+            </h2>
+            <ul className="crosses">
+              {p.items.map((item) => (
+                <li key={item} className="cross">
+                  <span className="cross__x">
+                    <Icon name="x" size={16} />
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
             {p.paragraphs.map((t) => (
               <p key={t} className="statement__text">
                 {t}
@@ -118,7 +163,7 @@ export function Problem() {
 export function WhatYouSee() {
   const w = content.whatYouSee
   return (
-    <section className="section">
+    <section className="section section--light">
       <div className="container">
         <Reveal>
           <Heading kicker={w.kicker} title={w.title} intro={w.intro} />
@@ -126,47 +171,32 @@ export function WhatYouSee() {
         <div className="grid3">
           {w.items.map((item, i) => (
             <Reveal key={item.title} delay={i * 90}>
-              <article className="glass card">
-                <span className="card__icon">
-                  <Icon name={item.icon} size={26} />
-                </span>
+              <article className={`glass show${item.featured ? ' show--featured' : ''}`}>
+                <div className="show__top">
+                  <span className="show__icon">
+                    <Icon name={item.icon} size={26} />
+                  </span>
+                  <span className="show__n">{item.n}</span>
+                </div>
+                {item.tag && <span className="show__tag">{item.tag}</span>}
                 <h3>{item.title}</h3>
                 <p className="muted">{item.text}</p>
+                <p className="show__label">{w.examplesLabel}</p>
+                <ul className="show__list">
+                  {item.examples.map((ex) => (
+                    <li key={ex}>
+                      <Icon name="check" size={16} />
+                      <span>{ex}</span>
+                    </li>
+                  ))}
+                </ul>
               </article>
             </Reveal>
           ))}
         </div>
-      </div>
-    </section>
-  )
-}
-
-export function Steps() {
-  const s = content.steps
-  return (
-    <section className="section">
-      <div className="container">
-        <Reveal>
-          <Heading kicker={s.kicker} title={s.title} intro={s.intro} />
-        </Reveal>
-        <ol className="steps">
-          {s.items.map((item, i) => (
-            <li key={item.n} className="steps__item">
-              <Reveal delay={i * 110}>
-                <article className={`glass step ${i === 2 ? 'glass--violet' : 'glass--blue'}`}>
-                  <span className="step__title">{item.title}</span>
-                  <p className="muted">{item.text}</p>
-                </article>
-                <div className={`pedestal ${i === 2 ? 'pedestal--violet' : ''}`}>
-                  <span>{item.n}</span>
-                </div>
-              </Reveal>
-            </li>
-          ))}
-        </ol>
         <Reveal className="center">
           <a className="btn" href="#inscripcion">
-            {s.cta}
+            {w.cta}
             <Icon name="arrow" size={20} />
           </a>
         </Reveal>
@@ -223,15 +253,21 @@ export function Organizers() {
           {o.items.map((item, i) => (
             <Reveal key={item.name} delay={i * 110}>
               <article className={`glass org ${i === 0 ? 'glass--blue' : 'glass--violet'}`}>
-                {item.photo && (
-                  <img className="org__photo" src={item.photo.src} alt={item.photo.alt} width={item.photo.width} height={item.photo.height} loading="lazy" />
-                )}
+                {item.photo &&
+                  (item.photo.panel ? (
+                    <div className="org__photo org__photo--logo">
+                      <img src={item.photo.src} alt={item.photo.alt} width={item.photo.width} height={item.photo.height} loading="lazy" />
+                    </div>
+                  ) : (
+                    <img className="org__photo" src={item.photo.src} alt={item.photo.alt} width={item.photo.width} height={item.photo.height} loading="lazy" />
+                  ))}
                 <div className="org__top">
                   <div>
                     <h3>{item.title}</h3>
                     <p className="org__role">{item.role}</p>
                   </div>
-                  <PartnerLogo item={item} />
+                  {/* Si el logo ya va grande arriba, no se repite la plaquita chica. */}
+                  {!item.photo?.panel && <PartnerLogo item={item} />}
                 </div>
                 <ul className="points">
                   {item.points.map((p) => (
@@ -293,7 +329,9 @@ export function Venue() {
             </div>
             <div className="venue__info">
               <p className="kicker">{v.kicker}</p>
-              <h2>{v.title}</h2>
+              <h2>
+                <Rich text={v.title} />
+              </h2>
               <p className="venue__addr">{address}</p>
               <p className="muted">{v.text}</p>
               <a className="btn btn--ghost" href={e.mapsUrl} target="_blank" rel="noreferrer">
@@ -334,10 +372,10 @@ export function Faq() {
 
 export function Signup() {
   return (
-    <section className="section section--signup" id="inscripcion">
+    <section className="section section--signup section--light" id="inscripcion">
       <div className="container container--narrow">
         <Reveal>
-          <Heading kicker={content.form.kicker} title="Tu lugar te espera" />
+          <Heading kicker={content.form.kicker} title={content.form.sectionTitle} />
         </Reveal>
         <Reveal>
           <RegistrationForm id="inscripcion-form" />
@@ -349,7 +387,7 @@ export function Signup() {
 
 export function Footer() {
   const p = content.privacy
-  const contact = [p.contact.whatsapp && `WhatsApp ${p.contact.whatsapp}`, p.contact.email].filter(Boolean).join(' · ')
+  const l = content.legal
   return (
     <footer className="footer">
       <div className="container container--narrow">
@@ -359,7 +397,12 @@ export function Footer() {
         <div className="privacy" id={p.id}>
           <h3>{p.title}</h3>
           <p>{p.text}</p>
-          {contact && <p>{contact}</p>}
+          <p className="privacy__legend">{p.legend}</p>
+          <p className="privacy__links">
+            <a href={l.privacy.path}>{l.otherDocs.privacy}</a>
+            <span aria-hidden="true"> · </span>
+            <a href={l.terms.path}>{l.otherDocs.terms}</a>
+          </p>
         </div>
       </div>
     </footer>

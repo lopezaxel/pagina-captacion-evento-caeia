@@ -31,14 +31,10 @@ type Values = {
   tipo: string
   consent: boolean
   email: string
-  rubro: string
-  facturas: string
-  como: string
-  tarea: string
 }
 type Errors = Partial<Record<'nombre' | 'whatsapp' | 'tipo' | 'email' | 'consent', string>>
 
-const EMPTY: Values = { nombre: '', whatsapp: '', tipo: '', consent: false, email: '', rubro: '', facturas: '', como: '', tarea: '' }
+const EMPTY: Values = { nombre: '', whatsapp: '', tipo: '', consent: false, email: '' }
 const f = content.form
 const e = content.event
 
@@ -108,10 +104,6 @@ export function RegistrationForm({ id }: { id: string }) {
           whatsapp: `+54${nationalNumber(values.whatsapp)}`,
           email: values.email,
           tipo: values.tipo,
-          rubro: values.rubro,
-          facturas: values.facturas,
-          como: values.como,
-          tarea: values.tarea,
           origen: origin,
           consentimiento: values.consent,
           // Se guarda el texto exacto que la persona aceptó.
@@ -242,47 +234,20 @@ export function RegistrationForm({ id }: { id: string }) {
       </div>
 
       {
-        <details className="more">
-          <summary>
-            <Icon name="plus" size={18} />
-            {f.moreToggle}
-          </summary>
-          <div className="more__body">
-            <div className="field">
-              <label htmlFor={fid('rubro')}>{f.labels.rubro}</label>
-              <input id={fid('rubro')} type="text" placeholder={f.placeholders.rubro} value={values.rubro} onChange={(ev) => set('rubro', ev.target.value)} />
-            </div>
-            <div className="field">
-              <label htmlFor={fid('facturas')}>{f.labels.facturas}</label>
-              <select id={fid('facturas')} value={values.facturas} onChange={(ev) => set('facturas', ev.target.value)}>
-                <option value="">Elegí una opción</option>
-                {f.facturas.map((t) => (
-                  <option key={t}>{t}</option>
-                ))}
-              </select>
-            </div>
-            <div className="field">
-              <label htmlFor={fid('como')}>{f.labels.como}</label>
-              <select id={fid('como')} value={values.como} onChange={(ev) => set('como', ev.target.value)}>
-                <option value="">Elegí una opción</option>
-                {f.como.map((t) => (
-                  <option key={t}>{t}</option>
-                ))}
-              </select>
-            </div>
-            <div className="field">
-              <label htmlFor={fid('tarea')}>{f.labels.tarea}</label>
-              <textarea id={fid('tarea')} rows={3} placeholder={f.placeholders.tarea} value={values.tarea} onChange={(ev) => set('tarea', ev.target.value)} />
-            </div>
-          </div>
-        </details>
       }
 
       <div className="field">
         <label className="check" htmlFor={fid('consent')}>
           <input id={fid('consent')} type="checkbox" checked={values.consent} onChange={(ev) => set('consent', ev.target.checked)} aria-invalid={!!errors.consent} />
           <span>
-            {f.consent} <a href={`#${content.privacy.id}`}>{f.privacyLink}</a>
+            {f.consent}{' '}
+            <a href={content.legal.privacy.path} target="_blank" rel="noopener noreferrer">
+              {f.privacyLink}
+            </a>
+            {' · '}
+            <a href={content.legal.terms.path} target="_blank" rel="noopener noreferrer">
+              {f.termsLink}
+            </a>
           </span>
         </label>
         {errors.consent && <span className="error">{errors.consent}</span>}

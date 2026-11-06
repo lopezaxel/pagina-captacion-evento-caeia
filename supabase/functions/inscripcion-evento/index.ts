@@ -14,7 +14,7 @@
 
 import postgres from 'npm:postgres@3.4.5'
 
-const TIPOS = ['Comerciante', 'Monotributista', 'Responsable Inscripto', 'Contador/a', 'Otro']
+const TIPOS = ['Dueño de negocio', 'Emprendedor (o por arrancar)', 'Empleado/a o encargado/a', 'Contador/a', 'Otro']
 const FACTURAS = ['No facturo', 'Menos de 10', 'Entre 10 y 50', 'Más de 50']
 const COMO = [
   'Desde el portal de ARCA',

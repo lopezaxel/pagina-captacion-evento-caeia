@@ -100,3 +100,10 @@ export function eventJsonLd(origin: string) {
     offers: { '@type': 'Offer', price: 0, priceCurrency: 'ARS', availability: 'https://schema.org/InStock', url: origin },
   }
 }
+
+/** Contacto del responsable para las páginas legales (mail y/o WhatsApp de content.legal.responsible). */
+export function contactLine(): string {
+  const r = content.legal.responsible
+  const parts = [r.email, r.whatsapp && `WhatsApp ${r.whatsapp}`].filter(Boolean)
+  return parts.length > 0 ? parts.join(' · ') : '[completar contacto]'
+}

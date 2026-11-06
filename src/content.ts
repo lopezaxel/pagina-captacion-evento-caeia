@@ -1,4 +1,5 @@
 // TODO EL TEXTO DE LA PÁGINA VIVE ACÁ. Axel edita este archivo; los componentes no llevan texto propio.
+// En los títulos de sección, lo que va entre *asteriscos* se destaca con color y brillo (ej.: 'Tu lugar *te espera*').
 // Los comentarios "PENDIENTE" marcan lo que todavía hay que confirmar antes de publicar.
 
 export const content = {
@@ -38,13 +39,19 @@ export const content = {
   },
 
   hero: {
-    pill: 'Seminario gratuito · Salta',
+    // Sello de arriba (como en los flyers): deja claro que es presencial y gratis. La palabra destacada va en color.
+    pill: { before: 'Seminario presencial y ', highlight: 'gratuito' },
     titleBefore: 'IA para comercios y emprendedores del ',
     titleHighlight: 'NOA',
-    // PENDIENTE: subtítulo propuesto, sin confirmar.
-    subtitle: 'De usar la IA para hacer flyers a crear herramientas para tu negocio',
+    // Subtítulo elegido por Axel (2026-11-06).
+    subtitle: 'Creá herramientas para tu negocio con IA',
     dateLine: 'Seminario gratuito · Miércoles 18 de noviembre · Cámara de Comercio de Salta',
-    chips: ['{hora} hs', '{direccion}', 'Gratis · cupo limitado'],
+    // Datos clave en píldoras con ícono (la fecha va en la tarjeta grande de arriba). Íconos: clock, pin, check, calendar.
+    chips: [
+      { icon: 'clock', text: '{hora} hs' },
+      { icon: 'pin', text: '{direccion}' },
+      { icon: 'check', text: 'Gratis · cupo limitado' },
+    ],
     // Imagen principal del evento (la misma de las publicidades). Para cambiarla: reemplazar los dos archivos de
     // /public manteniendo la proporción 4:5 (780 y 1100 px de ancho) y, si cambia el texto alternativo, editarlo acá.
     visual: {
@@ -68,59 +75,81 @@ export const content = {
     ],
   },
 
+  // Bloque "¿Es para vos?": hace que todos los anuncios (comerciantes, emprendedoras, general) aterricen en la misma página
+  // y cada persona se vea nombrada. Las etiquetas del primer grupo coinciden con las opciones de "Soy…" del formulario.
+  // PENDIENTE: Axel todavía no decidió si se suma "Contador/a" a las etiquetas.
+  forYou: {
+    kicker: 'Para quién es',
+    title: '¿Tenés un negocio? Este seminario *es para vos*.',
+    intro: 'Da igual el rubro y cómo tributes.',
+    groups: [
+      {
+        label: 'Si sos',
+        tone: 'violet',
+        items: [{ text: 'Dueño/a de un comercio' }, { text: 'Emprendedor/a' }, { text: 'Monotributista' }, { text: 'Responsable inscripto' }],
+      },
+      {
+        label: 'Y tu rubro es',
+        tone: 'blue',
+        items: [
+          { text: 'Automotor' },
+          { text: 'Indumentaria' },
+          { text: 'E-commerce' },
+          { text: 'Educación y capacitación' },
+          { text: 'Cualquier otro', open: true },
+        ],
+      },
+    ],
+  },
+
+  // Versión C elegida por Axel (2026-11-06): arranca con el dolor del lector y lista las mismas tareas que resuelven los
+  // ejemplos de "Qué vas a ver". No menciona CAEIA.
   problem: {
     kicker: 'El problema',
-    title: 'Todos usan la IA. Casi nadie la usa para trabajar.',
+    title: '¿Cuántas horas por semana se te van en *tareas que se repiten*?',
+    // Tareas que se repiten: se muestran como lista con una X (cosas que le pasan mal a un negocio).
+    items: ['Pasar listas de precios', 'Contestar los mismos mensajes', 'Armar planillas', 'Ordenar turnos'],
     paragraphs: [
-      'La mayoría la abrió para hacer un flyer, una foto de producto o sacarse una duda, y ahí se quedó. Mientras tanto, la IA ya puede resolver cosas que a tu negocio le cuestan horas todos los meses: filtrar listas de miles de productos, ordenar turnos, armar reportes, responderle a tus clientes.',
-      // PENDIENTE: Axel duda si esta frase suena a alivio o a reproche.
-      'Nadie te lo mostró. No es culpa tuya: la IA cambió más rápido de lo que alguien tuvo tiempo de explicártela.',
+      'Mucha gente usó la IA para hacer un flyer o sacarse una duda, y ahí se quedó. Pero puede encargarse de todo eso.',
     ],
   },
 
+  // Sección única (fusiona "Qué vas a ver" y "Los tres escalones", decisión de Axel 2026-11-06). Se ordena por 3 clases de
+  // ejemplos de IA, cada una con apps que Axel ya tiene funcionando. La tercera es CAEIA, el cierre y lanzamiento oficial.
+  // PENDIENTES antes de publicar:
+  //  - Ejemplo 1 (listas de precios): es la app de Tevez Repuestos. No se nombra a propósito: hablarlo con el jefe de Axel
+  //    antes de mostrarla o nombrarla (ver CLAUDE.md).
+  //  - Ejemplo 1 (certificados): es el generador de Fundación FIEL (no se nombra a la Fundación en este ejemplo).
+  //  - Ejemplo 2 (Bella Studio): hoy figura como demo, no como negocio real; por eso la página NO dice "negocios reales".
+  //  - Ejemplo 3 (CAEIA): solo afirmar lo que funcione en producción el 18/11 (falta el certificado de producción de ARCA).
   whatYouSee: {
     kicker: 'Qué vas a ver',
-    title: 'IA en negocios reales, de acá del norte',
-    intro:
-      'El 18 de noviembre vas a ver cómo se usa la IA en negocios reales. Apps que ya funcionan, con problemas que seguro reconocés.',
-    items: [
-      {
-        icon: 'eye',
-        title: 'Apps reales funcionando',
-        text: 'Las vas a ver andando, en negocios de acá, con problemas que seguro reconocés.',
-      },
-      {
-        icon: 'search',
-        title: 'Qué se puede resolver en tu negocio',
-        text: 'Salís sabiendo detectar qué tareas repetitivas de tu negocio se pueden resolver con IA.',
-      },
-      {
-        icon: 'users',
-        title: 'Cuándo conviene un experto',
-        text: 'Qué podés armar vos con las herramientas que ya existen, y dónde conviene que lo haga alguien que sabe.',
-      },
-    ],
-  },
-
-  steps: {
-    kicker: 'Los tres escalones',
-    title: 'De usar la IA a crear con IA',
-    intro: 'Lo que podés armar vos, y lo que conviene que arme un experto.',
+    title: '*Tres formas* de usar la IA en tu negocio',
+    intro: 'Te mostramos un ejemplo de cada una, funcionando.',
+    examplesLabel: 'Lo vas a ver',
     items: [
       {
         n: '01',
-        title: 'Usarla',
-        text: 'Dudas, flyers, fotos de producto. Donde está casi todo el mundo hoy.',
+        icon: 'repeat',
+        title: 'Automatización',
+        text: 'Una app que hace sola una tarea que se repite todos los meses.',
+        examples: ['Filtra listas de precios de miles de repuestos', 'Arma certificados en masa a partir de un Excel'],
       },
       {
         n: '02',
-        title: 'Crearla',
-        text: 'Mini apps para un sector de tu negocio. La IA bajó la vara: hoy cualquiera puede crear algo útil.',
+        icon: 'mic',
+        title: 'Agente de IA',
+        text: 'Un asistente que conversa con tus clientes y resuelve por vos.',
+        examples: ['El agente de Bella Studio atiende a los clientes con voz'],
       },
       {
         n: '03',
-        title: 'Sumar un experto',
-        text: 'Cuando necesitás algo serio, con IA metida en los procesos de tu negocio, hace falta alguien que sepa.',
+        icon: 'phone',
+        title: 'App de IA',
+        text: 'Una app completa con la IA adentro.',
+        tag: 'Cierre de la noche',
+        featured: true,
+        examples: ['CAEIA: una app con IA y un agente de IA por WhatsApp, que lanzamos oficialmente esa noche'],
       },
     ],
     cta: 'Quiero mi lugar',
@@ -128,7 +157,7 @@ export const content = {
 
   agenda: {
     kicker: 'La agenda',
-    title: 'Cómo va a ser la noche',
+    title: 'Cómo va a ser *la noche*',
     // Los horarios se calculan solos a partir de event.startTime. PENDIENTE: agenda propuesta, sin confirmar.
     items: [
       { minutes: 10, title: 'Bienvenida y presentación de NIKI' },
@@ -141,9 +170,7 @@ export const content = {
     networking: { minutes: 30, title: 'Networking' },
   },
 
-  // PENDIENTE (importante): la Fundación FIEL figura como organizadora y se usa su logo. Confirmar con su presidente
-  // que está de acuerdo con el texto "Organizan" (si solo acompaña, cambiar a "Con el respaldo de" o "En alianza con").
-  // Confirmar también cada frase de abajo antes de publicar (no inventar prueba social).
+  // Fundación FIEL: Axel confirmó el 2026-11-06 que la Fundación acepta figurar como organizadora y usar su logo.
   organizers: {
     label: 'Organizan',
     kicker: 'Quiénes lo organizan',
@@ -158,10 +185,11 @@ export const content = {
         width: 900,
         height: 389,
         photo: { src: '/axel-seminario.jpg', alt: 'Axel López en un seminario de IA', width: 900, height: 764 },
+        // «Universy»: confirmado por Axel (2026-11-06).
         points: [
-          'Desarrolla apps y software con IA para negocios de Salta y el NOA.',
-          'Ya dio seminarios de IA para negocios, junto a la Fundación FIEL.',
-          'Las apps que vas a ver ya funcionan en negocios reales.',
+          'Consultor en Inteligencia Artificial',
+          'Desarrollador de software con IA aplicada a negocios',
+          'Capacitador de IA en Fundación FIEL y Universy',
         ],
       },
       {
@@ -172,10 +200,13 @@ export const content = {
         shape: 'round',
         width: 521,
         height: 521,
-        photo: null,
+        // El logo va grande, en el lugar de la foto (panel del mismo gris que el fondo del logo). `panel: true` lo activa.
+        photo: { src: '/fiel-logo.jpg', alt: 'Logo de la Fundación FIEL', width: 521, height: 521, panel: true },
+        // Datos dictados por Axel (2026-11-06); la Fundación confirmó que figura como organizadora.
         points: [
-          'Da capacitaciones laborales en Salta y Jujuy.',
-          'Tiene cursos de tecnología, como uso de la IA, agentes de IA y programación con IA.',
+          'Personería Jurídica Nº 862/21 otorgada por la Inspección General de Justicia - Gobierno de la Provincia de Salta',
+          'Capacitación para el trabajo',
+          'Formación integral con aval institucional para profesionales del norte argentino',
         ],
       },
     ],
@@ -192,14 +223,14 @@ export const content = {
 
   venue: {
     kicker: 'Dónde es',
-    title: 'Cámara de Comercio de Salta',
+    title: 'Cámara de Comercio de *Salta*',
     text: 'Entrada gratis con inscripción previa. Solo presencial, en Salta Capital.',
     button: 'Cómo llegar',
   },
 
   faq: {
     kicker: 'Preguntas frecuentes',
-    title: 'Antes de anotarte',
+    title: 'Antes de *anotarte*',
     // Tokens: {hora}, {direccion}, {duracion}
     items: [
       { q: '¿Es gratis?', a: 'Sí. La entrada es gratuita, solo hace falta inscribirte antes.' },
@@ -212,15 +243,13 @@ export const content = {
         q: '¿Necesito saber de tecnología?',
         a: 'No. Está pensado para dueños de negocios y emprendedores. Vas a ver ejemplos con problemas que seguro reconocés.',
       },
-      {
-        q: '¿Se filma?',
-        a: 'Sí. Vamos a filmar el evento y parte del material se va a publicar en la web y en Instagram. Por eso te lo avisamos acá y al inscribirte.',
-      },
     ],
   },
 
   form: {
     kicker: 'Inscripción',
+    // Título grande de la sección (arriba de la tarjeta del formulario).
+    sectionTitle: 'Tu lugar *te espera*',
     title: 'Anotate y reservá tu lugar',
     subtitle: 'Es gratis. Te pedimos solo lo necesario.',
     // El mail es obligatorio (pedido de Axel, 2026-11-03: servirá para los recordatorios por mail).
@@ -234,27 +263,23 @@ export const content = {
       tipo: 'Soy…',
       email: 'Mail',
       emailOptional: 'Mail (opcional)',
-      rubro: 'Rubro de tu negocio (opcional)',
-      facturas: '¿Cuántas facturas emitís por mes? (opcional)',
-      como: '¿Cómo facturás hoy? (opcional)',
-      tarea: '¿Qué tarea repetitiva te quita más tiempo? (opcional)',
     },
     placeholders: {
       nombre: 'Ej.: María Pérez',
       whatsapp: '387 1234567',
       email: 'tu@mail.com',
-      rubro: 'Ej.: indumentaria, repuestos, carnicería',
-      tarea: 'Contanos y quizás lo resolvemos en vivo',
     },
     hints: { whatsapp: 'Con código de área, sin 0 ni 15. Ej.: 387 1234567' },
-    tipos: ['Comerciante', 'Monotributista', 'Responsable Inscripto', 'Contador/a', 'Otro'],
-    facturas: ['No facturo', 'Menos de 10', 'Entre 10 y 50', 'Más de 50'],
-    como: ['Desde el portal de ARCA', 'Con una planilla de Excel', 'Con otro sistema o app', 'Me factura mi contador', 'Otra forma'],
-    moreToggle: 'Contanos un poco más (opcional)',
-    // PENDIENTE: validar el texto del consentimiento con la contadora o un abogado (Ley 25.326).
+    // "Soy…": 5 tipos de persona (decisión de Axel, 2026-11-06), por prioridad de público. Antes mezclaba rol y condición
+    // fiscal. «Emprendedor» incluye a quien está por arrancar. Si se cambian, hay que cambiar también la lista TIPOS de la
+    // función inscripcion-evento y la regla inscripciones_tipo_check de la tabla (si no, esos envíos se rechazan).
+    tipos: ['Dueño de negocio', 'Emprendedor (o por arrancar)', 'Empleado/a o encargado/a', 'Contador/a', 'Otro'],
+    // Texto provisorio: Axel decidió publicar con este texto (2026-11-06); idealmente lo valida la contadora o un abogado
+    // (Ley 25.326). Se guarda tal cual en cada inscripción. Por pedido de Axel ya no menciona que el evento se filma.
     consent:
-      'Acepto que me escriban por WhatsApp y por mail con información del evento y novedades del lanzamiento de CAEIA. Sé que el evento se filma y que puedo pedir la baja cuando quiera.',
-    privacyLink: 'Aviso de privacidad',
+      'Acepto que me escriban por WhatsApp y por mail con información del evento y novedades del lanzamiento de CAEIA, y que mis datos se guarden en servidores del exterior, como explica la política de privacidad. Puedo pedir la baja cuando quiera.',
+    privacyLink: 'Política de privacidad',
+    termsLink: 'Términos y condiciones',
     submit: 'Quiero mi lugar',
     sending: 'Reservando…',
     errors: {
@@ -277,12 +302,192 @@ export const content = {
     },
   },
 
+  // Pie de página: resumen + leyenda obligatoria (Disposición DNPDP 10/2008, hoy a cargo de la AAIP) + links a las dos páginas.
   privacy: {
     id: 'privacidad',
     title: 'Aviso de privacidad',
-    // PENDIENTE: texto provisorio. Validar con la contadora o un abogado (Ley 25.326) y completar el contacto.
-    text: 'Usamos tus datos solo para organizar el evento y mantenerte al tanto de lo que pase antes y después. No los compartimos con terceros ni los usamos para otra cosa. Podés pedir que los corrijamos o los borremos cuando quieras. El evento se filma y parte del material se publica en la web y en redes.',
-    contact: { whatsapp: '', email: '' },
+    text: 'Usamos tus datos solo para organizar el evento y mantenerte al tanto de lo que pase antes y después. No los vendemos ni los cedemos a otras empresas.',
+    legend:
+      'El titular de los datos personales tiene la facultad de ejercer el derecho de acceso a los mismos en forma gratuita a intervalos no inferiores a seis meses, salvo que se acredite un interés legítimo al efecto conforme lo establecido en el artículo 14, inciso 3 de la Ley Nº 25.326. La Agencia de Acceso a la Información Pública, en su carácter de Órgano de Control de la Ley Nº 25.326, tiene la atribución de atender las denuncias y reclamos que interpongan quienes resulten afectados en sus derechos por incumplimiento de las normas vigentes en materia de protección de datos personales.',
+  },
+
+  // Páginas legales: /privacidad y /terminos. Redactadas el 2026-11-06 a partir de lo que hace la página (qué datos se piden,
+  // dónde se guardan, quién los ve) y de la Ley 25.326, la Disposición DNPDP 10/2008 y la Resolución AAIP 14/2018.
+  // No reemplazan la revisión de un abogado. Tokens: {contacto}, {fecha}, {hora}, {direccion}.
+  // PENDIENTE (bloquea publicar): completar `responsible.email` y/o `responsible.whatsapp`. Hasta entonces las páginas muestran
+  // «[completar contacto]».
+  legal: {
+    updated: '6 de noviembre de 2026',
+    backToEvent: 'Volver a la página del evento',
+    otherDocs: { privacy: 'Política de privacidad', terms: 'Términos y condiciones' },
+    responsible: {
+      name: 'Axel López',
+      brand: 'NIKI Software',
+      city: 'Salta Capital, Argentina',
+      email: '',
+      whatsapp: '',
+    },
+    privacy: {
+      path: '/privacidad',
+      pageTitle: 'Política de privacidad · Seminario de IA en Salta',
+      title: 'Política de privacidad',
+      intro:
+        'Acá te contamos qué datos pedimos para inscribirte al seminario, para qué los usamos, con quién los compartimos y cómo podés ejercer tus derechos.',
+      sections: [
+        {
+          h: 'Quién es el responsable',
+          p: [
+            'El responsable del tratamiento de tus datos es Axel López, que trabaja bajo la marca NIKI Software, con domicilio en Salta Capital, Argentina. Organiza el seminario junto con la Fundación FIEL.',
+            'Para consultas y para ejercer tus derechos: {contacto}.',
+          ],
+        },
+        {
+          h: 'Qué datos recibimos',
+          list: [
+            'Nombre y apellido.',
+            'Número de WhatsApp.',
+            'Mail.',
+            'El tipo de persona que elegiste en «Soy…» (por ejemplo, dueño de negocio o emprendedor).',
+            'El origen del link por el que llegaste (por ejemplo, Instagram), cuando viene en la dirección.',
+            'La fecha y hora de tu inscripción y el texto del consentimiento que aceptaste.',
+          ],
+          p: [
+            'Todos son obligatorios: sin ellos no podemos anotarte. No pedimos datos sensibles, clave fiscal ni datos bancarios.',
+            'Para evitar abusos en el formulario guardamos un código irreversible derivado de tu dirección IP, no la dirección en sí. Ese código se descarta al día siguiente.',
+          ],
+        },
+        {
+          h: 'Para qué los usamos',
+          list: [
+            'Confirmar tu inscripción y organizar el evento (lista de asistentes e ingreso).',
+            'Avisarte por WhatsApp y por mail sobre el evento: recordatorios y cambios.',
+            'Contarte las novedades del lanzamiento de CAEIA, porque lo aceptaste al inscribirte.',
+            'Sumarte al grupo de WhatsApp del evento, si vos lo pedís. Es voluntario.',
+            'Hacer estadísticas internas (cuántas personas se anotaron y de qué tipo).',
+          ],
+          p: ['No los usamos para otra cosa ni los vendemos. Tu consentimiento es libre y podés retirarlo cuando quieras.'],
+        },
+        {
+          h: 'Con quién los compartimos',
+          p: [
+            'Para que la página funcione usamos proveedores técnicos que guardan o procesan los datos por nuestra cuenta: Supabase (base de datos), Vercel (alojamiento de la página), Google (mapa que se muestra en la página), WhatsApp de Meta (mensajes y grupo del evento) y, cuando enviemos recordatorios por mail, un servicio de correo electrónico.',
+            'No cedemos tus datos a otras empresas ni personas, salvo que una autoridad competente lo exija.',
+          ],
+        },
+        {
+          h: 'Servidores en el exterior',
+          p: [
+            'Algunos de esos proveedores guardan los datos en servidores ubicados fuera de la Argentina, principalmente en Estados Unidos. Al inscribirte aceptás esa transferencia. Elegimos proveedores que aplican medidas de seguridad y compromisos contractuales de protección de datos.',
+          ],
+        },
+        {
+          h: 'Cookies',
+          p: [
+            'Esta página no usa cookies propias ni herramientas de análisis o de publicidad. El mapa de «Dónde es» lo muestra Google, y Google puede usar cookies al cargarlo, según su propia política.',
+          ],
+        },
+        {
+          h: 'Cuánto tiempo los guardamos',
+          p: [
+            'Los conservamos mientras sean necesarios para esas finalidades (el evento y las comunicaciones que aceptaste recibir) y hasta que pidas la baja o la supresión.',
+          ],
+        },
+        {
+          h: 'Tus derechos',
+          p: [
+            'Podés pedir que te mostremos qué datos tuyos tenemos (acceso), que los corrijamos o actualicemos (rectificación) o que los eliminemos (supresión), según los artículos 14 a 16 de la Ley 25.326. Escribinos a {contacto}, desde el mismo mail o WhatsApp con el que te anotaste. Respondemos los pedidos de acceso en 10 días corridos y los de rectificación o supresión en 5 días hábiles.',
+          ],
+          legend: true,
+        },
+        {
+          h: 'Cómo dejar de recibir mensajes',
+          p: [
+            'Respondé BAJA a cualquier mensaje por WhatsApp, o usá el enlace de baja que va en cada mail. Dejamos de escribirte.',
+          ],
+        },
+        {
+          h: 'Seguridad',
+          p: [
+            'La página usa conexión cifrada (HTTPS). La base de datos donde se guardan tus datos no es de acceso público: solo se escribe a través del formulario de inscripción y solo accede el responsable.',
+          ],
+        },
+        {
+          h: 'Cambios en esta política',
+          p: ['Si la cambiamos, publicamos la nueva versión en esta página con su fecha de actualización.'],
+        },
+      ],
+    },
+    terms: {
+      path: '/terminos',
+      pageTitle: 'Términos y condiciones · Seminario de IA en Salta',
+      title: 'Términos y condiciones',
+      intro: 'Estas son las condiciones para inscribirte y asistir al seminario. Al inscribirte las aceptás.',
+      sections: [
+        {
+          h: 'Qué es este evento',
+          p: [
+            'Es un seminario gratuito y presencial de inteligencia artificial para negocios, organizado por NIKI Software y la Fundación FIEL. Se realiza el {fecha}, a las {hora} hs, en la Cámara de Comercio e Industria de Salta ({direccion}). Incluye la presentación de CAEIA, una app de facturación electrónica con IA.',
+          ],
+        },
+        {
+          h: 'Inscripción',
+          p: [
+            'La inscripción es gratuita y obligatoria. Tenés que usar datos verdaderos y anotarte una sola vez. Inscribirte no te obliga a comprar ni a contratar nada.',
+          ],
+        },
+        {
+          h: 'Cupo e ingreso',
+          p: [
+            'El salón tiene capacidad limitada (100 personas) y recibimos más inscripciones que lugares. Por eso anotarte no garantiza una butaca: el ingreso es por orden de llegada hasta completar la capacidad. Te recomendamos llegar con tiempo.',
+          ],
+        },
+        {
+          h: 'Cambios y cancelación',
+          p: [
+            'Podemos cambiar la fecha, el horario, el lugar o el programa, o cancelar el evento por razones de organización o de fuerza mayor. Si pasa, te avisamos por los medios que nos dejaste. Como el evento es gratuito, no corresponde ninguna compensación.',
+          ],
+        },
+        {
+          h: 'Admisión y conducta',
+          p: [
+            'Pedimos respeto hacia los demás asistentes, los oradores y el lugar. Los organizadores se reservan el derecho de admisión y permanencia, y se aplican las normas de la Cámara de Comercio.',
+          ],
+        },
+        {
+          h: 'Contenido del seminario',
+          p: [
+            'El seminario es informativo y educativo. No es asesoramiento profesional, contable, fiscal ni legal, y no garantizamos resultados para tu negocio. Que se presente una herramienta no te obliga a contratarla.',
+            'Los materiales y presentaciones son de sus autores y no se pueden reproducir ni vender sin permiso.',
+          ],
+        },
+        {
+          h: 'Mensajes y grupo de WhatsApp',
+          p: [
+            'Si lo aceptaste, te escribimos por WhatsApp y por mail sobre el evento. El grupo de WhatsApp es opcional: sus integrantes pueden ver los números de los demás. El grupo se elimina después del evento.',
+          ],
+        },
+        {
+          h: 'Datos personales',
+          p: ['Tratamos tus datos como explica nuestra política de privacidad.'],
+        },
+        {
+          h: 'Responsabilidad',
+          p: [
+            'En la medida en que la ley lo permita, los organizadores no se hacen responsables por la pérdida o el daño de objetos personales ni por situaciones ajenas a la organización.',
+          ],
+        },
+        {
+          h: 'Ley aplicable',
+          p: [
+            'Se aplican las leyes de la República Argentina. Cualquier controversia se somete a los tribunales ordinarios de Salta Capital, sin perjuicio de los derechos que la ley reconoce a los consumidores.',
+          ],
+        },
+        {
+          h: 'Contacto',
+          p: ['Para cualquier consulta: {contacto}.'],
+        },
+      ],
+    },
   },
 
   footer: {

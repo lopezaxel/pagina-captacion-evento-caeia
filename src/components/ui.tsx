@@ -78,7 +78,29 @@ const PATHS: Record<string, ReactNode> = {
       <path d="M12 7v5l3 2" />
     </>
   ),
+  repeat: (
+    <>
+      <path d="m17 2 4 4-4 4" />
+      <path d="M3 11v-1a4 4 0 0 1 4-4h14" />
+      <path d="m7 22-4-4 4-4" />
+      <path d="M21 13v1a4 4 0 0 1-4 4H3" />
+    </>
+  ),
+  mic: (
+    <>
+      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+      <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+      <path d="M12 19v3" />
+    </>
+  ),
+  phone: (
+    <>
+      <rect x="5" y="2" width="14" height="20" rx="2" />
+      <path d="M12 18h.01" />
+    </>
+  ),
   check: <path d="M20 6 9 17l-5-5" />,
+  x: <path d="M18 6 6 18M6 6l12 12" />,
   plus: <path d="M12 5v14M5 12h14" />,
   arrow: <path d="M5 12h14m-6-6 6 6-6 6" />,
   message: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
@@ -128,11 +150,41 @@ export function Reveal({ children, className = '', delay = 0 }: { children: Reac
   )
 }
 
+/** Texto con partes destacadas: lo que va entre *asteriscos* se muestra con color y brillo (clase `tl`). */
+export function Rich({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(/\*(.+?)\*/g).map((part, i) =>
+        i % 2 === 1 ? (
+          <span key={i} className="tl">
+            {part}
+          </span>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  )
+}
+
+/** Fondo oscuro con manchas de luz que "respiran" (lo usan la página principal y las legales). */
+export function Backdrop() {
+  return (
+    <div className="backdrop" aria-hidden="true">
+      <i className="blob blob--1" />
+      <i className="blob blob--2" />
+      <i className="blob blob--3" />
+    </div>
+  )
+}
+
 export function Heading({ kicker, title, intro }: { kicker: string; title: string; intro?: string }) {
   return (
     <div className="heading">
       <p className="kicker">{kicker}</p>
-      <h2>{title}</h2>
+      <h2>
+        <Rich text={title} />
+      </h2>
       {intro && <p className="heading__intro">{intro}</p>}
     </div>
   )

@@ -182,6 +182,88 @@ a {
   padding: 52px 0;
 }
 
+/* ---------- Secciones claras: contraste con el resto de la página (que es oscura) ----------
+   Se activan agregando la clase `section--light` a una <section> en Sections.tsx; se sacan quitándola. */
+.section.section--light {
+  --text: #0b1020;
+  --muted: #4a5573;
+  --faint: #6b7594;
+  padding: 76px 0;
+  color: var(--text);
+  background: linear-gradient(180deg, #f6f4ff 0%, #eceffd 100%);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 0 70px rgba(139, 92, 246, 0.28);
+}
+.section--light .kicker {
+  color: #0369a1;
+}
+.section--light .kicker::before {
+  background: #0284c7;
+}
+/* Las tarjetas de vidrio pasan a ser tarjetas blancas con sombra suave. */
+.section--light .glass {
+  background: #fff;
+  border-color: rgba(109, 40, 217, 0.18);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 16px 44px rgba(76, 29, 149, 0.13);
+}
+.section--light .glass::before {
+  display: none;
+}
+.section--light .show__icon {
+  color: #0369a1;
+  background: rgba(14, 165, 233, 0.1);
+  border-color: rgba(2, 132, 199, 0.35);
+  box-shadow: none;
+}
+.section--light .show__n,
+.section--light .show__list .icon {
+  color: #0369a1;
+}
+/* La tarjeta del cierre (CAEIA) es oscura sobre el fondo claro: es el punto más alto de la noche. */
+.section--light .glass.show--featured {
+  --text: #f4f6fb;
+  --muted: #aab3cf;
+  --faint: #8b95b8;
+  color: var(--text);
+  background: linear-gradient(160deg, #2a1d63 0%, #0d1230 100%);
+  border-color: rgba(139, 92, 246, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 0 0 1px rgba(139, 92, 246, 0.3),
+    0 26px 70px rgba(76, 29, 149, 0.45);
+}
+.section--light .show--featured .show__icon {
+  color: #c4b5fd;
+  background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(167, 139, 250, 0.6);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.35);
+}
+.section--light .show--featured .show__n,
+.section--light .show--featured .show__list .icon {
+  color: #a78bfa;
+}
+.section--light .slot__time {
+  color: #0369a1;
+}
+/* El formulario sigue siendo una tarjeta oscura sobre el fondo claro: es lo que más resalta. */
+.section--light .glass.form {
+  --text: #f4f6fb;
+  --muted: #aab3cf;
+  --faint: #7480a3;
+  color: var(--text);
+  background: linear-gradient(160deg, #1a2147 0%, #0d1230 100%);
+  border-color: rgba(139, 92, 246, 0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 0 0 1px rgba(139, 92, 246, 0.25),
+    0 30px 80px rgba(76, 29, 149, 0.45);
+}
+
 .wordmark {
   font-family: 'Helvetica Neue', Arial, sans-serif;
   font-weight: 700;
@@ -227,9 +309,29 @@ a {
 .venue h2 {
   font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  font-size: clamp(30px, 5.4vw, 48px);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-size: clamp(34px, 8vw, 60px);
+  text-wrap: balance; /* reparte las líneas parejas: evita que quede una palabra suelta abajo */
+}
+/* Palabra destacada de un título (lo que va entre *asteriscos* en content.ts): degradé de azul a violeta con brillo. */
+.tl {
+  background: linear-gradient(95deg, #38bdf8 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  filter: drop-shadow(0 0 22px rgba(139, 92, 246, 0.5));
+}
+.section--light .tl {
+  background-image: linear-gradient(95deg, #0284c7 0%, #6d28d9 100%);
+  filter: none;
+}
+/* Tarjeta destacada oscura dentro de una sección clara: vuelve el degradé luminoso. */
+.section--light .glass.show--featured .tl {
+  background-image: linear-gradient(95deg, #38bdf8 0%, #a78bfa 100%);
 }
 .heading__intro {
   margin-top: 14px;
@@ -247,15 +349,16 @@ a {
   height: 54px;
   padding: 0 28px;
   border: 0;
-  border-radius: 14px;
+  border-radius: 999px; /* botón en píldora, como el de los flyers */
   background: linear-gradient(135deg, var(--violet-deep), var(--violet));
   color: #fff;
-  font: 600 17px/1 var(--font-display);
+  font: 700 17px/1 var(--font-display);
   text-decoration: none;
   cursor: pointer;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.32),
-    0 10px 34px rgba(139, 92, 246, 0.5);
+    0 0 0 1px rgba(196, 181, 253, 0.35),
+    0 10px 38px rgba(139, 92, 246, 0.62);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -415,17 +518,28 @@ a:focus-visible {
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 66%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 66%, transparent 100%);
 }
+/* Sello "Seminario presencial y gratuito": píldora de vidrio con borde violeta, como en los flyers. */
 .pill {
   display: flex;
   width: fit-content;
   align-items: center;
   gap: 10px;
+  padding: 9px 18px 9px 14px;
+  border: 1px solid rgba(139, 92, 246, 0.55);
+  border-radius: 999px;
+  background: rgba(139, 92, 246, 0.14);
+  box-shadow: 0 0 28px rgba(139, 92, 246, 0.28);
   font-size: 12.5px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--text);
   margin-bottom: 18px;
+}
+.pill b {
+  font-weight: 700;
+  color: #c4b5fd;
+  text-shadow: 0 0 18px rgba(167, 139, 250, 0.8);
 }
 .pill__dot {
   width: 8px;
@@ -493,10 +607,17 @@ h1 {
   gap: 8px;
 }
 .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   border-radius: 999px;
-  padding: 7px 14px;
+  padding: 8px 15px 8px 12px;
   font-size: 13.5px;
   font-weight: 600;
+}
+.chip .icon {
+  flex: none;
+  color: var(--blue-soft);
 }
 .chip:last-child {
   border-color: rgba(139, 92, 246, 0.6);
@@ -638,32 +759,6 @@ select option {
 }
 .check a {
   color: var(--text);
-}
-.more {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
-}
-.more summary {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 16px;
-  font-weight: 500;
-  font-size: 14.5px;
-  cursor: pointer;
-  list-style: none;
-}
-.more summary::-webkit-details-marker {
-  display: none;
-}
-.more[open] summary .icon {
-  transform: rotate(45deg);
-}
-.more__body {
-  display: grid;
-  gap: 14px;
-  padding: 0 16px 16px;
 }
 .form--done {
   padding: 28px 22px;
@@ -859,11 +954,45 @@ select option {
 .statement__title {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(30px, 6vw, 54px);
-  line-height: 1.04;
-  letter-spacing: -0.035em;
-  margin-bottom: 20px;
-  max-width: 18ch;
+  font-size: clamp(32px, 7vw, 58px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  margin-bottom: 22px;
+  max-width: 22ch;
+  text-wrap: balance;
+}
+/* Lista de problemas con una X: cosas que le pasan mal a un negocio. Rosa suave (el mismo de los errores del formulario). */
+.crosses {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 26px;
+  max-width: 900px;
+}
+.cross {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px 12px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(251, 113, 133, 0.3);
+  background: rgba(251, 113, 133, 0.08);
+  font-size: clamp(17px, 4.4vw, 20px);
+  font-weight: 600;
+  line-height: 1.25;
+}
+.cross__x {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: #fda4af;
+  background: rgba(251, 113, 133, 0.16);
+  border: 1px solid rgba(251, 113, 133, 0.55);
+}
+.cross__x .icon {
+  stroke-width: 2.4;
 }
 .statement__text {
   font-size: clamp(17px, 4.4vw, 20px);
@@ -877,18 +1006,37 @@ select option {
   display: grid;
   gap: 16px;
 }
-.card {
-  padding: 26px 22px;
+.grid3 > .reveal {
   height: 100%;
 }
-.card h3 {
-  font-family: var(--font-display);
-  font-size: 22px;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-  margin: 16px 0 8px;
+/* Tarjetas de "Qué vas a ver": una por clase de IA (automatización, agente, app), con barra luminosa en el borde. */
+.show {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px 22px 26px 28px;
+  border-color: rgba(139, 92, 246, 0.4);
 }
-.card__icon {
+.show::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: linear-gradient(180deg, var(--blue-soft), var(--violet));
+  box-shadow:
+    0 0 14px rgba(139, 92, 246, 0.9),
+    0 0 26px rgba(14, 165, 233, 0.45);
+}
+.show__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.show__icon {
   display: grid;
   place-items: center;
   width: 54px;
@@ -899,57 +1047,63 @@ select option {
   border: 1px solid rgba(14, 165, 233, 0.45);
   box-shadow: 0 0 30px rgba(14, 165, 233, 0.25);
 }
-
-.steps {
-  display: grid;
-  gap: 34px;
-  margin-bottom: 8px;
-}
-.steps__item {
-  position: relative;
-}
-.steps__item > .reveal {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-.step {
-  flex: 1;
-  padding: 28px 22px 44px;
-  text-align: center;
-}
-.step__title {
-  display: block;
-  font-family: var(--font-display);
+.show__n {
+  font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 28px;
+  font-size: 15px;
+  color: var(--blue-soft);
+}
+.show__tag {
+  align-self: flex-start;
+  margin-bottom: 12px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(167, 139, 250, 0.7);
+  background: rgba(139, 92, 246, 0.22);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #ddd6fe;
+}
+.show h3 {
+  font-family: var(--font-display);
+  font-size: 26px;
   letter-spacing: -0.02em;
-  margin-bottom: 10px;
+  line-height: 1.1;
+  margin: 0 0 8px;
 }
-.pedestal {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  width: 132px;
-  height: 48px;
-  margin: -28px auto 0;
-  border-radius: 50%;
-  border: 1px solid rgba(14, 165, 233, 0.6);
-  background: radial-gradient(ellipse at center, rgba(14, 165, 233, 0.32), rgba(14, 165, 233, 0.05) 72%);
-  box-shadow:
-    0 0 38px rgba(14, 165, 233, 0.5),
-    inset 0 0 18px rgba(14, 165, 233, 0.35);
-  font-family: var(--font-display);
+.show > p.muted {
+  font-size: 16px;
+  line-height: 1.5;
+}
+.show__label {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(139, 92, 246, 0.25);
+  font-size: 12px;
   font-weight: 700;
-  font-size: 22px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--faint);
 }
-.pedestal--violet {
-  border-color: rgba(139, 92, 246, 0.7);
-  background: radial-gradient(ellipse at center, rgba(139, 92, 246, 0.36), rgba(139, 92, 246, 0.05) 72%);
-  box-shadow:
-    0 0 38px rgba(139, 92, 246, 0.55),
-    inset 0 0 18px rgba(139, 92, 246, 0.4);
+.show__list {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+.show__list li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 15.5px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.show__list .icon {
+  flex: none;
+  margin-top: 2px;
+  color: var(--blue-soft);
 }
 
 .timeline {
@@ -982,6 +1136,50 @@ select option {
 
 .closing {
   padding: 30px 22px;
+}
+
+/* Bloque "¿Es para vos?": etiquetas de quién sos y de qué rubro. */
+.foryou {
+  padding: 30px 22px;
+}
+.foryou .heading {
+  margin-bottom: 26px;
+}
+.foryou__groups {
+  display: grid;
+  gap: 24px;
+}
+.foryou__label {
+  margin-bottom: 12px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tag {
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(139, 92, 246, 0.55);
+  background: rgba(139, 92, 246, 0.16);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.tag--blue {
+  border-color: rgba(14, 165, 233, 0.55);
+  background: rgba(14, 165, 233, 0.13);
+}
+/* "Cualquier otro": borde punteado para que se lea como abierto, no como un rubro más. */
+.tag--open {
+  border-style: dashed;
+  background: transparent;
+  color: var(--muted);
 }
 
 /* Organizadores: barra de logos (arriba y en el pie) y tarjetas */
@@ -1058,6 +1256,20 @@ select option {
   box-shadow:
     0 0 0 1px rgba(14, 165, 233, 0.2),
     0 18px 40px rgba(0, 0, 0, 0.45);
+}
+/* Logo de FIEL grande, con el mismo alto que la foto de la otra tarjeta; el panel tiene el gris del fondo del logo (#d9d9d9). */
+.org__photo--logo {
+  display: grid;
+  place-items: center;
+  background: #d9d9d9;
+  overflow: hidden;
+}
+.org__photo--logo img {
+  display: block;
+  height: 230px; /* mismo alto que la foto de la otra tarjeta (270px en escritorio, abajo) */
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
 }
 .org__top {
   display: flex;
@@ -1211,6 +1423,130 @@ select option {
   margin-bottom: 6px;
 }
 
+.privacy p + p {
+  margin-top: 8px;
+}
+.privacy__legend {
+  font-size: 12px;
+}
+.privacy__links {
+  font-size: 13.5px;
+}
+.privacy__links a {
+  color: var(--muted);
+  text-underline-offset: 3px;
+}
+.privacy__links a:hover {
+  color: var(--text);
+}
+
+/* ---------- Páginas legales (/privacidad y /terminos) ---------- */
+.legal__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 24px;
+  padding: 22px 0 8px;
+}
+.legal__back {
+  color: var(--muted);
+  font-size: 15px;
+  text-underline-offset: 3px;
+}
+.legal__back:hover {
+  color: var(--text);
+}
+.legal {
+  padding-bottom: 72px;
+}
+.legal__card {
+  padding: 30px 22px 34px;
+}
+.legal h1 {
+  font-size: clamp(32px, 7vw, 48px);
+  margin-bottom: 8px;
+}
+.legal__updated {
+  font-size: 13.5px;
+  color: var(--faint);
+}
+.legal__intro {
+  margin-top: 18px;
+  font-size: 18px;
+  color: var(--muted);
+}
+.legal__sec {
+  margin-top: 30px;
+  padding-top: 26px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.legal__sec h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-family: var(--font-display);
+  font-size: 21px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.legal__n {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(139, 92, 246, 0.6);
+  background: rgba(139, 92, 246, 0.18);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: #ddd6fe;
+}
+.legal__sec p,
+.legal__list li {
+  color: var(--muted);
+  font-size: 16.5px;
+  line-height: 1.6;
+}
+.legal__sec p + p,
+.legal__list + p {
+  margin-top: 12px;
+}
+.legal__list {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-left: 22px;
+  list-style: disc;
+}
+.legal__list li::marker {
+  color: var(--blue-soft);
+}
+.legal__legend {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(14, 165, 233, 0.35);
+  background: rgba(14, 165, 233, 0.08);
+  font-size: 14.5px !important;
+}
+.legal__other {
+  margin-top: 34px;
+  font-size: 16px;
+}
+.legal__other a {
+  color: var(--blue-soft);
+  text-underline-offset: 3px;
+}
+@media (min-width: 900px) {
+  .legal__card {
+    padding: 48px 56px 52px;
+  }
+}
+
 /* ---------- Botón fijo (celular) ---------- */
 .sticky {
   position: fixed;
@@ -1295,6 +1631,9 @@ select option {
   .org__photo {
     height: 270px;
   }
+  .org__photo--logo img {
+    height: 270px;
+  }
   .facts {
     grid-template-columns: repeat(4, 1fr);
   }
@@ -1372,22 +1711,20 @@ select option {
   .form {
     padding: 30px 28px 26px;
   }
-  .steps {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 56px;
-  }
-  .steps__item:not(:last-child)::after {
-    content: '→';
-    position: absolute;
-    right: -42px;
-    bottom: 8px;
-    font-size: 26px;
-    color: var(--blue-soft);
-    text-shadow: 0 0 16px rgba(14, 165, 233, 0.8);
-  }
   .statement,
   .closing {
     padding: 52px 56px;
+  }
+  .foryou {
+    padding: 48px 56px;
+  }
+  .crosses {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 14px;
+  }
+  .foryou__groups {
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
   }
   .partners {
     --plate: 66px;
