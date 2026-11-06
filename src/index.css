@@ -578,6 +578,18 @@ select option {
   font-size: 13px;
   color: #fda4af;
 }
+.error--send {
+  margin: 0;
+  text-align: center;
+}
+/* Campo trampa anti-bots: fuera de la pantalla (no display:none, que algunos bots detectan). */
+.hp {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
 .check {
   display: flex;
   align-items: flex-start;

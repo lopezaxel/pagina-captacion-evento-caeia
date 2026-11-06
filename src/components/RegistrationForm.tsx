@@ -60,6 +60,7 @@ export function RegistrationForm({ id }: { id: string }) {
   const [values, setValues] = useState<Values>(EMPTY)
   const [errors, setErrors] = useState<Errors>({})
   const [status, setStatus] = useState<'idle' | 'sending' | 'done'>('idle')
+  const [sendError, setSendError] = useState('')
   const origin = useMemo(() => new URLSearchParams(window.location.search).get('o') ?? '', [])
 
   const set = <K extends keyof Values>(key: K, value: Values[K]) => {
@@ -67,22 +68,66 @@ export function RegistrationForm({ id }: { id: string }) {
     if (key in errors) setErrors((prev) => ({ ...prev, [key]: undefined }))
   }
 
-  function onSubmit(ev: FormEvent) {
+  async function onSubmit(ev: FormEvent<HTMLFormElement>) {
     ev.preventDefault()
     const found = validate(values)
     setErrors(found)
+    setSendError('')
     if (Object.keys(found).length > 0) return
     setStatus('sending')
-    // PROTOTIPO: la inscripción todavía no se guarda en ningún lado. Acá va la llamada a Supabase.
-    // Al guardar, usar `+54${nationalNumber(values.whatsapp)}`. Ojo: los links wa.me de Argentina llevan 549 + número.
-    if (import.meta.env.DEV) {
-      console.info('[prototipo] inscripción simulada', {
-        ...values,
-        whatsapp: `+54${nationalNumber(values.whatsapp)}`,
-        origen: origin || null,
-      })
+
+    // Dirección de la función `inscripcion-evento` (ver .env.example). No lleva ninguna clave.
+    const endpoint = import.meta.env.VITE_INSCRIPCION_URL as string | undefined
+    // Campo trampa anti-bots: las personas no lo ven, así que va vacío.
+    const trap = new FormData(ev.currentTarget).get('website')
+
+    // Sin dirección configurada solo se simula en desarrollo. En la página publicada NUNCA se finge
+    // que se guardó: si falta la dirección, se muestra el error y no se pierde una inscripción en silencio.
+    if (!endpoint) {
+      if (import.meta.env.DEV) {
+        console.info('[desarrollo] inscripción simulada (falta VITE_INSCRIPCION_URL)', {
+          ...values,
+          whatsapp: `+54${nationalNumber(values.whatsapp)}`,
+          origen: origin || null,
+        })
+        window.setTimeout(() => setStatus('done'), 700)
+      } else {
+        setSendError(f.errors.send)
+        setStatus('idle')
+      }
+      return
     }
-    window.setTimeout(() => setStatus('done'), 700)
+
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre: values.nombre,
+          // Se guarda como +54 + 10 dígitos. Ojo: los links wa.me de Argentina llevan 549 + número.
+          whatsapp: `+54${nationalNumber(values.whatsapp)}`,
+          email: values.email,
+          tipo: values.tipo,
+          rubro: values.rubro,
+          facturas: values.facturas,
+          como: values.como,
+          tarea: values.tarea,
+          origen: origin,
+          consentimiento: values.consent,
+          // Se guarda el texto exacto que la persona aceptó.
+          consentimiento_texto: f.consent,
+          website: trap ?? '',
+        }),
+      })
+      if (res.ok) {
+        setStatus('done')
+        return
+      }
+      setSendError(res.status === 429 ? f.errors.tooMany : f.errors.send)
+    } catch {
+      setSendError(f.errors.send)
+    }
+    setStatus('idle')
   }
 
   if (status === 'done') {
@@ -242,6 +287,18 @@ export function RegistrationForm({ id }: { id: string }) {
         </label>
         {errors.consent && <span className="error">{errors.consent}</span>}
       </div>
+
+      {/* Campo trampa: fuera de pantalla y sin foco; si algo lo completa, es un bot. */}
+      <div className="hp" aria-hidden="true">
+        <label htmlFor={fid('website')}>No completar</label>
+        <input id={fid('website')} name="website" type="text" tabIndex={-1} autoComplete="off" />
+      </div>
+
+      {sendError && (
+        <p className="error error--send" role="alert">
+          {sendError}
+        </p>
+      )}
 
       <button className="btn btn--block" type="submit" disabled={sending}>
         {sending ? f.sending : f.submit}

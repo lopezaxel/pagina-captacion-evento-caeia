@@ -264,6 +264,9 @@ export const content = {
       email: 'Revisá el mail: parece que le falta algo.',
       emailRequired: 'Escribí tu mail.',
       consent: 'Necesitamos tu consentimiento para anotarte.',
+      // Errores al enviar (no son del llenado): se muestran sobre el botón.
+      send: 'No pudimos guardar tu inscripción. Probá de nuevo en un momento.',
+      tooMany: 'Hiciste muchos intentos seguidos. Esperá unos minutos y probá de nuevo.',
     },
     success: {
       title: 'Listo, {nombre}. Tu lugar está reservado.',
