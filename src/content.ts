@@ -314,8 +314,8 @@ export const content = {
   // Páginas legales: /privacidad y /terminos. Redactadas el 2026-11-06 a partir de lo que hace la página (qué datos se piden,
   // dónde se guardan, quién los ve) y de la Ley 25.326, la Disposición DNPDP 10/2008 y la Resolución AAIP 14/2018.
   // No reemplazan la revisión de un abogado. Tokens: {contacto}, {fecha}, {hora}, {direccion}.
-  // PENDIENTE (bloquea publicar): completar `responsible.email` y/o `responsible.whatsapp`. Hasta entonces las páginas muestran
-  // «[completar contacto]».
+  // Contacto del responsable cargado por Axel el 2026-11-06 (`responsible.email` y `responsible.whatsapp`); si se vacían, las
+  // páginas muestran «[completar contacto]».
   legal: {
     updated: '6 de noviembre de 2026',
     backToEvent: 'Volver a la página del evento',
@@ -324,8 +324,8 @@ export const content = {
       name: 'Axel López',
       brand: 'NIKI Software',
       city: 'Salta Capital, Argentina',
-      email: '',
-      whatsapp: '',
+      email: 'lopezaxelalejandro@gmail.com',
+      whatsapp: '+54 9 387 685 5489',
     },
     privacy: {
       path: '/privacidad',
