@@ -6,3 +6,6 @@ dist
 !.env.example
 *.local
 .claude/settings.local.json
+
+.vercel
+.env*
