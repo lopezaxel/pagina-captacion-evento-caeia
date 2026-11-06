@@ -312,6 +312,11 @@ export const content = {
     intro:
       'En el evento vamos a hacer el lanzamiento de CAEIA, una app pensada para que facturar en ARCA sea más fácil. ¡Queremos tu opinión!',
     note: 'Es opcional y lleva menos de 1 minuto.',
+    // Carrusel: una pregunta por pantalla. Tokens: {n}, {total}.
+    progress: 'Pregunta {n} de {total}',
+    back: 'Atrás',
+    skip: 'Omitir',
+    needOne: 'Elegí al menos una respuesta para poder enviar.',
     questions: [
       {
         id: 'molestia',
