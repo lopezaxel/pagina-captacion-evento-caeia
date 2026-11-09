@@ -220,8 +220,7 @@ a {
   border-color: rgba(2, 132, 199, 0.35);
   box-shadow: none;
 }
-.section--light .show__n,
-.section--light .show__list .icon {
+.section--light .show__n {
   color: #0369a1;
 }
 /* La tarjeta del cierre (CAEIA) es oscura sobre el fondo claro: es el punto más alto de la noche. */
@@ -243,8 +242,7 @@ a {
   border-color: rgba(167, 139, 250, 0.6);
   box-shadow: 0 0 30px rgba(139, 92, 246, 0.35);
 }
-.section--light .show--featured .show__n,
-.section--light .show--featured .show__list .icon {
+.section--light .show--featured .show__n {
   color: #a78bfa;
 }
 .section--light .slot__time {
@@ -795,6 +793,99 @@ select option {
   line-height: 1.2;
   text-align: center;
 }
+/* Pantalla de confirmación: solo el botón del grupo de WhatsApp, con el aviso de que hay que entrar. */
+.done__must {
+  max-width: 34ch;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text);
+}
+.done__actions .btn--lg {
+  min-height: 62px;
+  font-size: 18px;
+}
+
+/* Cartel «¡Atención!» (antes de enviar la inscripción): por encima de todo, con el resto de la página oscurecida. */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  overflow-y: auto;
+  background: rgba(4, 6, 18, 0.82);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  animation: modal-fade 0.2s ease both;
+}
+.modal__box {
+  width: min(100%, 480px);
+  padding: 32px 24px 26px;
+  border-radius: 26px;
+  text-align: center;
+  background:
+    radial-gradient(70% 50% at 50% 0%, rgba(139, 92, 246, 0.45), rgba(139, 92, 246, 0) 100%),
+    linear-gradient(160deg, #2a1d63 0%, #0d1230 100%);
+  border: 2px solid rgba(196, 181, 253, 0.85);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 0 0 6px rgba(139, 92, 246, 0.22),
+    0 0 90px rgba(139, 92, 246, 0.6),
+    0 30px 80px rgba(0, 0, 0, 0.6);
+  animation: modal-pop 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  outline: none;
+}
+.modal__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  margin-bottom: 14px;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(135deg, var(--violet-deep), var(--violet));
+  border: 1px solid rgba(221, 214, 254, 0.8);
+  box-shadow: 0 0 40px rgba(139, 92, 246, 0.8);
+}
+.modal__box h3 {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 9vw, 42px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.modal__text {
+  font-size: clamp(18px, 4.8vw, 21px);
+  line-height: 1.4;
+  color: #e4e8f7;
+}
+/* Palabras clave del cartel: con marcador violeta detrás para que salten a la vista. */
+.modal__em {
+  color: #fff;
+  font-weight: 800;
+  padding: 0 0.15em;
+  border-radius: 6px;
+  background: rgba(139, 92, 246, 0.75);
+}
+.modal__actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+@keyframes modal-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes modal-pop {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.94);
+  }
+}
 .dev-note {
   font-size: 12px;
   color: var(--faint);
@@ -994,13 +1085,177 @@ select option {
 .cross__x .icon {
   stroke-width: 2.4;
 }
-.statement__text {
-  font-size: clamp(17px, 4.4vw, 20px);
-  color: var(--muted);
-  max-width: 62ch;
+/* Tarjeta destacada del problema: la frase clave, pintada entera con el degradé de marca (azul a violeta). */
+.callout {
+  position: relative;
+  margin-top: 18px;
+  padding: 30px 24px;
+  border-radius: var(--radius);
+  text-align: center;
+  background: linear-gradient(120deg, var(--violet-deep) 0%, var(--violet) 100%);
+  border: 1px solid rgba(221, 214, 254, 0.75);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 0 0 1px rgba(167, 139, 250, 0.5),
+    0 0 60px rgba(139, 92, 246, 0.55),
+    0 20px 50px rgba(76, 29, 149, 0.5);
+  overflow: hidden;
 }
-.statement__text + .statement__text {
-  margin-top: 16px;
+.callout::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(60% 120% at 0% 0%, rgba(56, 189, 248, 0.35), rgba(56, 189, 248, 0) 70%);
+}
+.callout p {
+  position: relative;
+  max-width: 30ch;
+  margin: 0 auto;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(24px, 6vw, 40px);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: #fff;
+  text-wrap: balance;
+}
+.callout__em {
+  padding: 0 0.12em;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--violet-deep);
+}
+.statement__copy {
+  min-width: 0;
+}
+.statement__grid {
+  display: grid;
+  gap: 26px;
+}
+/* En celular el gráfico va antes de la lista; en escritorio, a la derecha. */
+.statement__grid .loopviz {
+  order: -1;
+}
+
+/* Gráfico animado del problema: una semana donde las mismas tareas vuelven a aparecer cada día. */
+.loopviz {
+  display: grid;
+  gap: 16px;
+  align-self: center;
+  padding: 18px 16px 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  background: rgba(10, 14, 26, 0.5);
+  box-shadow: 0 0 40px rgba(139, 92, 246, 0.16);
+}
+.loopviz__top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.loopviz__clock {
+  flex: none;
+  width: 84px;
+  height: 84px;
+  filter: drop-shadow(0 0 12px rgba(14, 165, 233, 0.5));
+}
+.loopviz__face {
+  fill: rgba(14, 165, 233, 0.08);
+  stroke: var(--blue-soft);
+  stroke-width: 3;
+}
+.loopviz__ticks {
+  stroke: var(--muted);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.loopviz__hand {
+  stroke-linecap: round;
+  transform-origin: 50px 50px;
+  animation: loop-spin 2.4s linear infinite;
+}
+.loopviz__hand--min {
+  stroke: var(--blue-soft);
+  stroke-width: 3.5;
+}
+.loopviz__hand--hour {
+  stroke: var(--violet);
+  stroke-width: 4.5;
+  animation-duration: 14s;
+}
+.loopviz__pin {
+  fill: #fff;
+}
+.loopviz__caption {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(18px, 4.8vw, 22px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.loopviz__week {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.loopviz__day {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  padding: 8px 6px 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+.loopviz__label {
+  margin-bottom: 2px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.loopviz__block {
+  display: block;
+  height: 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(251, 113, 133, 0.8);
+  background: rgba(251, 113, 133, 0.5);
+  animation: loop-block 6s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.28s + var(--j) * 0.14s);
+}
+.loopviz__block:nth-of-type(2) {
+  width: 72%;
+}
+.loopviz__block:nth-of-type(3) {
+  width: 88%;
+}
+.loopviz__block:nth-of-type(4) {
+  width: 58%;
+}
+@keyframes loop-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loop-block {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scaleX(0.6);
+  }
+  14%,
+  72% {
+    opacity: 1;
+    transform: none;
+  }
+  88%,
+  100% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
 }
 .grid3 {
   display: grid;
@@ -1074,36 +1329,8 @@ select option {
   margin: 0 0 8px;
 }
 .show > p.muted {
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.5;
-}
-.show__label {
-  margin-top: 22px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(139, 92, 246, 0.25);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--faint);
-}
-.show__list {
-  display: grid;
-  gap: 10px;
-  margin-top: 12px;
-}
-.show__list li {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  font-size: 15.5px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-.show__list .icon {
-  flex: none;
-  margin-top: 2px;
-  color: var(--blue-soft);
 }
 
 .timeline {
@@ -1132,6 +1359,42 @@ select option {
   font-size: 12.5px;
   color: var(--muted);
   white-space: nowrap;
+}
+/* Break: pausa entre bloques; se ve más liviano (borde punteado, sin relleno). */
+.slot--break {
+  background: transparent;
+  border-style: dashed;
+  box-shadow: none;
+}
+.slot--break .slot__time,
+.slot--break .slot__title {
+  color: var(--muted);
+}
+/* Presentación de CAEIA: tarjeta pintada entera de violeta, la que más se ve de la agenda. */
+.glass.slot--featured {
+  padding-top: 24px;
+  padding-bottom: 24px;
+  background: linear-gradient(120deg, var(--violet-deep) 0%, var(--violet) 100%);
+  border-color: rgba(221, 214, 254, 0.75);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 0 0 1px rgba(167, 139, 250, 0.5),
+    0 0 46px rgba(139, 92, 246, 0.65),
+    0 18px 50px rgba(76, 29, 149, 0.55);
+}
+.slot--featured .slot__time,
+.slot--featured .slot__title,
+.slot--featured .slot__min {
+  color: #fff;
+}
+.slot--featured .slot__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+}
+.slot--featured .slot__min {
+  opacity: 0.85;
 }
 
 .closing {
@@ -1333,6 +1596,76 @@ select option {
   margin: 8px 0 26px;
 }
 
+/* Cierre «Presentamos CAEIA»: la tarjeta más fuerte de la página. Fondo violeta oscuro con un foco de luz detrás del
+   wordmark (oscuro a propósito: el «IA» violeta del wordmark tiene que seguir viéndose), borde que gira y resplandor. */
+@property --ang {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+.glass.closing {
+  padding-top: 44px;
+  padding-bottom: 44px;
+  /* La luz violeta va a los costados y el centro queda oscuro: así el wordmark (sin fondo propio) se separa del fondo. */
+  background:
+    radial-gradient(38% 34% at 50% 40%, rgba(6, 8, 24, 0.78), rgba(6, 8, 24, 0) 100%),
+    radial-gradient(45% 70% at 0% 0%, rgba(139, 92, 246, 0.42), rgba(139, 92, 246, 0) 100%),
+    radial-gradient(45% 70% at 100% 100%, rgba(139, 92, 246, 0.34), rgba(139, 92, 246, 0) 100%),
+    linear-gradient(160deg, #1e1550 0%, #0b0f2a 100%);
+  border-color: rgba(196, 181, 253, 0.8);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 0 0 1px rgba(139, 92, 246, 0.45),
+    0 0 100px rgba(139, 92, 246, 0.6),
+    0 0 60px rgba(14, 165, 233, 0.28),
+    0 30px 80px rgba(0, 0, 0, 0.5);
+}
+.closing::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  pointer-events: none;
+  background: conic-gradient(from var(--ang), #38bdf8, #8b5cf6, #c4b5fd, #8b5cf6, #38bdf8);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: closing-spin 6s linear infinite;
+}
+@keyframes closing-spin {
+  to {
+    --ang: 360deg;
+  }
+}
+.closing .kicker {
+  color: #c4b5fd;
+}
+.closing .wordmark--xl {
+  font-size: clamp(76px, 22vw, 140px);
+  margin: 10px 0 8px;
+  /* Sombra oscura bajo las letras (sin brillo violeta, que las mezclaba con el fondo). */
+  text-shadow:
+    0 2px 3px rgba(3, 4, 16, 0.95),
+    0 10px 26px rgba(3, 4, 16, 0.85),
+    0 0 60px rgba(3, 4, 16, 0.7);
+}
+.closing__text {
+  color: #fff;
+  font-size: clamp(22px, 5.4vw, 30px);
+  font-weight: 600;
+}
+.closing__tagline {
+  color: #c9d1ee;
+}
+.btn--lg {
+  height: 62px;
+  padding: 0 38px;
+  font-size: 18px;
+}
+
 .venue {
   display: grid;
 }
@@ -1438,185 +1771,6 @@ select option {
 }
 .privacy__links a:hover {
   color: var(--text);
-}
-
-/* ---------- Encuesta opcional (pantalla de confirmación) ---------- */
-.survey {
-  display: grid;
-  gap: 18px;
-  margin-top: 26px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  text-align: left;
-}
-.survey h4 {
-  font-family: var(--font-display);
-  font-size: 22px;
-  letter-spacing: -0.02em;
-}
-.survey__intro {
-  color: var(--muted);
-  font-size: 16px;
-  line-height: 1.5;
-}
-.survey__q {
-  display: grid;
-  gap: 10px;
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-.survey__q legend,
-.survey__legend {
-  padding: 0;
-  font-size: 15.5px;
-  font-weight: 600;
-  line-height: 1.35;
-}
-.survey__opts {
-  display: grid;
-  gap: 8px;
-}
-.survey__opt {
-  position: relative;
-  cursor: pointer;
-}
-.survey__opt input {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-.survey__opt span {
-  display: block;
-  padding: 13px 18px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.05);
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.25;
-  transition:
-    background 0.15s ease,
-    border-color 0.15s ease;
-}
-.survey__opt:hover span {
-  background: rgba(255, 255, 255, 0.1);
-}
-.survey__opt.is-on span {
-  border-color: rgba(167, 139, 250, 0.9);
-  background: rgba(139, 92, 246, 0.35);
-  color: #fff;
-  font-weight: 600;
-}
-.survey__opt:focus-within span {
-  outline: 2px solid var(--blue-soft);
-  outline-offset: 2px;
-}
-.survey__bar {
-  display: flex;
-  gap: 6px;
-  margin-top: 2px;
-}
-.survey__bar span {
-  flex: 1;
-  height: 5px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.14);
-  transition: background 0.25s ease;
-}
-.survey__bar span.is-on {
-  background: linear-gradient(90deg, var(--blue-soft), var(--violet));
-  box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
-}
-.survey__count {
-  margin-top: -8px;
-  font-size: 12.5px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--faint);
-}
-.survey__stage {
-  outline: none;
-  animation: survey-in 0.28s ease both;
-}
-.survey__stage legend,
-.survey__stage .survey__legend {
-  font-size: 19px;
-  line-height: 1.3;
-}
-.survey__stage textarea {
-  min-height: 110px;
-}
-@keyframes survey-in {
-  from {
-    opacity: 0;
-    transform: translateX(22px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-.survey__nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 24px;
-}
-.survey__link {
-  padding: 6px 2px;
-  border: 0;
-  background: none;
-  color: var(--muted);
-  font: 600 15px/1 var(--font-body);
-  cursor: pointer;
-  text-underline-offset: 3px;
-}
-.survey__link:hover {
-  color: var(--text);
-  text-decoration: underline;
-}
-.survey__link:focus-visible {
-  outline: 2px solid var(--blue-soft);
-  outline-offset: 3px;
-  border-radius: 6px;
-}
-@media (min-width: 900px) {
-  .survey__opts {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .survey__stage {
-    animation: none;
-  }
-}
-.survey__privacy {
-  text-align: center;
-}
-.survey--done {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.survey--done p {
-  font-size: 16.5px;
-  font-weight: 500;
-}
-.survey__ok {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  color: var(--blue-soft);
-  background: rgba(14, 165, 233, 0.14);
-  border: 1px solid rgba(14, 165, 233, 0.5);
 }
 
 /* ---------- Páginas legales (/privacidad y /terminos) ---------- */
@@ -1834,9 +1988,6 @@ select option {
   .venue__map {
     min-height: 400px;
   }
-  .done__actions {
-    grid-template-columns: 1fr 1fr;
-  }
 }
 @media (min-width: 900px) {
   body {
@@ -1901,6 +2052,22 @@ select option {
     grid-template-columns: 1fr 1fr;
     gap: 12px 14px;
   }
+  .statement__grid {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 48px;
+    align-items: center;
+  }
+  .statement__grid .loopviz {
+    order: 0;
+    padding: 24px 22px 22px;
+  }
+  .statement .crosses {
+    grid-template-columns: 1fr;
+  }
+  .loopviz__clock {
+    width: 96px;
+    height: 96px;
+  }
   .foryou__groups {
     grid-template-columns: 1fr 1fr;
     gap: 48px;
@@ -1923,7 +2090,12 @@ select option {
     scroll-behavior: auto;
   }
   .blob,
-  .countdown__dot {
+  .countdown__dot,
+  .closing::after,
+  .modal,
+  .modal__box,
+  .loopviz__hand,
+  .loopviz__block {
     animation: none;
   }
   .reveal {

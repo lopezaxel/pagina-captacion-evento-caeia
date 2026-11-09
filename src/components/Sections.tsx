@@ -127,6 +127,35 @@ export function ForYou() {
   )
 }
 
+/** Gráfico animado: una semana donde las mismas tareas vuelven a aparecer cada día, con un reloj que gira rápido. */
+function LoopVisual() {
+  const p = content.problem
+  return (
+    <div className="loopviz" role="img" aria-label={p.visual.caption}>
+      <div className="loopviz__top">
+        <svg className="loopviz__clock" viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="44" className="loopviz__face" />
+          <path d="M50 10v7M90 50h-7M50 90v-7M10 50h7" className="loopviz__ticks" />
+          <line x1="50" y1="50" x2="50" y2="29" className="loopviz__hand loopviz__hand--hour" />
+          <line x1="50" y1="50" x2="50" y2="16" className="loopviz__hand loopviz__hand--min" />
+          <circle cx="50" cy="50" r="3.5" className="loopviz__pin" />
+        </svg>
+        <p className="loopviz__caption">{p.visual.caption}</p>
+      </div>
+      <div className="loopviz__week" aria-hidden="true">
+        {p.visual.days.map((d, i) => (
+          <div key={d} className="loopviz__day">
+            <b className="loopviz__label">{d}</b>
+            {p.items.map((t, j) => (
+              <span key={t} className="loopviz__block" style={{ '--i': i, '--j': j } as React.CSSProperties} />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export function Problem() {
   const p = content.problem
   return (
@@ -138,22 +167,37 @@ export function Problem() {
             <h2 className="statement__title">
               <Rich text={p.title} />
             </h2>
-            <ul className="crosses">
-              {p.items.map((item) => (
-                <li key={item} className="cross">
-                  <span className="cross__x">
-                    <Icon name="x" size={16} />
-                  </span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-            {p.paragraphs.map((t) => (
-              <p key={t} className="statement__text">
-                {t}
-              </p>
-            ))}
+            <div className="statement__grid">
+              <div className="statement__copy">
+                <ul className="crosses">
+                  {p.items.map((item) => (
+                    <li key={item} className="cross">
+                      <span className="cross__x">
+                        <Icon name="x" size={16} />
+                      </span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <LoopVisual />
+            </div>
           </div>
+        </Reveal>
+        <Reveal delay={120}>
+          <aside className="callout">
+            <p>
+              {p.callout.split(/\*(.+?)\*/g).map((part, i) =>
+                i % 2 === 1 ? (
+                  <strong key={i} className="callout__em">
+                    {part}
+                  </strong>
+                ) : (
+                  part
+                ),
+              )}
+            </p>
+          </aside>
         </Reveal>
       </div>
     </section>
@@ -181,15 +225,6 @@ export function WhatYouSee() {
                 {item.tag && <span className="show__tag">{item.tag}</span>}
                 <h3>{item.title}</h3>
                 <p className="muted">{item.text}</p>
-                <p className="show__label">{w.examplesLabel}</p>
-                <ul className="show__list">
-                  {item.examples.map((ex) => (
-                    <li key={ex}>
-                      <Icon name="check" size={16} />
-                      <span>{ex}</span>
-                    </li>
-                  ))}
-                </ul>
               </article>
             </Reveal>
           ))}
@@ -218,7 +253,7 @@ export function Agenda() {
           {rows.map((r, i) => (
             <li key={r.title}>
               <Reveal delay={i * 60}>
-                <div className="glass slot">
+                <div className={`glass slot${r.break ? ' slot--break' : ''}${r.featured ? ' slot--featured' : ''}`}>
                   <span className="slot__time">{r.time}</span>
                   <span className="slot__title">{r.title}</span>
                   <span className="slot__min">{r.minutes} min</span>
@@ -292,7 +327,7 @@ export function Closing() {
   const c = content.closing
   return (
     <section className="section">
-      <div className="container container--narrow">
+      <div className="container">
         <Reveal>
           <div className="glass glass--violet closing">
             <p className="kicker">{c.kicker}</p>
@@ -300,9 +335,9 @@ export function Closing() {
             <Wordmark className="wordmark--xl" />
             <p className="closing__text">{c.text}</p>
             <p className="closing__tagline">{c.tagline}</p>
-            <a className="btn" href="#inscripcion">
+            <a className="btn btn--lg" href="#inscripcion">
               {c.cta}
-              <Icon name="arrow" size={20} />
+              <Icon name="arrow" size={22} />
             </a>
           </div>
         </Reveal>

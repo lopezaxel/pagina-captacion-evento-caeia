@@ -11,8 +11,9 @@ export function addMinutes(time: string, mins: number): string {
   return `${pad(Math.floor(t / 60) % 24)}:${pad(t % 60)}`
 }
 
-export const seminarMinutes = content.agenda.items.reduce((sum, i) => sum + i.minutes, 0)
-export const totalMinutes = seminarMinutes + content.agenda.networking.minutes
+// Los minutos del break no cuentan como seminario, pero sí en la duración total (calendario, cronómetro, JSON-LD).
+export const seminarMinutes = content.agenda.items.reduce((sum, i) => sum + (i.break ? 0 : i.minutes), 0)
+export const totalMinutes = content.agenda.items.reduce((sum, i) => sum + i.minutes, 0) + content.agenda.networking.minutes
 export const address = `${e.street}, ${e.city}`
 
 // Salta no usa horario de verano: el offset es siempre -03:00. Se usa para el cronómetro.

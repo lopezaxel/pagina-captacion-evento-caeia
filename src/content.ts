@@ -41,7 +41,7 @@ export const content = {
   hero: {
     // Sello de arriba (como en los flyers): deja claro que es presencial y gratis. La palabra destacada va en color.
     pill: { before: 'Seminario presencial y ', highlight: 'gratuito' },
-    titleBefore: 'IA para comercios y emprendedores del ',
+    titleBefore: 'IA para comerciantes y emprendedores del ',
     titleHighlight: 'NOA',
     // Subtítulo elegido por Axel (2026-11-06).
     subtitle: 'Creá herramientas para tu negocio con IA',
@@ -93,8 +93,16 @@ export const content = {
         tone: 'blue',
         items: [
           { text: 'Automotor' },
-          { text: 'Indumentaria' },
+          { text: 'Indumentaria y calzado' },
+          { text: 'Alimentos y carnicerías' },
+          { text: 'Gastronomía' },
+          { text: 'Ferretería y construcción' },
+          { text: 'Belleza y estética' },
+          { text: 'Salud y bienestar' },
+          { text: 'Hotelería y turismo' },
           { text: 'E-commerce' },
+          { text: 'Servicios profesionales' },
+          { text: 'Tecnología' },
           { text: 'Educación y capacitación' },
           { text: 'Cualquier otro', open: true },
         ],
@@ -109,9 +117,15 @@ export const content = {
     title: '¿Cuántas horas por semana se te van en *tareas que se repiten*?',
     // Tareas que se repiten: se muestran como lista con una X (cosas que le pasan mal a un negocio).
     items: ['Pasar listas de precios', 'Contestar los mismos mensajes', 'Armar planillas', 'Ordenar turnos'],
-    paragraphs: [
-      'Mucha gente usó la IA para hacer un flyer o sacarse una duda, y ahí se quedó. Pero puede encargarse de todo eso.',
-    ],
+    // Tarjeta destacada (pedido de Axel, 2026-11-09; reemplaza al párrafo «Mucha gente usó la IA para hacer un flyer…»).
+    // Lo que va entre *asteriscos* se resalta. Se corrigieron «nos a enseñado» y «laborles» del texto original.
+    callout: 'Actualmente usamos la IA para cosas personales, pero *NADIE* nos ha enseñado a usarla en nuestras actividades laborales.',
+    // Gráfico animado (Problem en Sections.tsx): una semana de trabajo donde las mismas tareas vuelven a aparecer todos los
+    // días, con un reloj que gira rápido. Sin cifras. Las tareas son las de `items` (un bloque por tarea y por día).
+    visual: {
+      caption: 'La misma semana, una y otra vez',
+      days: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'],
+    },
   },
 
   // Sección única (fusiona "Qué vas a ver" y "Los tres escalones", decisión de Axel 2026-11-06). Se ordena por 3 clases de
@@ -126,30 +140,33 @@ export const content = {
     kicker: 'Qué vas a ver',
     title: '*Tres formas* de usar la IA en tu negocio',
     intro: 'Te mostramos un ejemplo de cada una, funcionando.',
-    examplesLabel: 'Lo vas a ver',
+    // Cada tarjeta dice UNA sola cosa (pedido de Axel, 2026-11-07, después de una crítica de copy): título + una línea. Se
+    // sacó la etiqueta «Lo vas a ver» y la lista de ejemplos, porque repetían la frase (y una decía «meses» y otra «días»).
     items: [
       {
         n: '01',
         icon: 'repeat',
         title: 'Automatización',
-        text: 'Una app que hace sola una tarea que se repite todos los meses.',
-        examples: ['Filtra listas de precios de miles de repuestos', 'Arma certificados en masa a partir de un Excel'],
+        // Sin nombrar las apps de listas de precios y certificados (decisión de Axel, 2026-11-07).
+        text: 'Una app que hace sola las tareas que repetís todos los días en tu negocio.',
       },
       {
         n: '02',
         icon: 'mic',
         title: 'Agente de IA',
+        // Sin nombrar Bella Studio (decisión de Axel, 2026-11-07). Se sacó «clientes reales en un negocio real»: Bella Studio
+        // figura como demo y no se puede afirmar. Si Axel confirma que atiende clientes de verdad, se puede volver a poner.
         text: 'Un asistente que conversa con tus clientes y resuelve por vos.',
-        examples: ['El agente de Bella Studio atiende a los clientes con voz'],
       },
       {
         n: '03',
         icon: 'phone',
         title: 'App de IA',
-        text: 'Una app completa con la IA adentro.',
+        // PENDIENTE: la versión larga («una app con IA y un agente de IA por WhatsApp») solo se puede afirmar si el agente
+        // funciona en producción el 18/11. Esta dice solo lo seguro: es CAEIA y se lanza esa noche.
+        text: 'CAEIA, la app con IA que lanzamos oficialmente esa noche.',
         tag: 'Cierre de la noche',
         featured: true,
-        examples: ['CAEIA: una app con IA y un agente de IA por WhatsApp, que lanzamos oficialmente esa noche'],
       },
     ],
     cta: 'Quiero mi lugar',
@@ -158,13 +175,18 @@ export const content = {
   agenda: {
     kicker: 'La agenda',
     title: 'Cómo va a ser *la noche*',
-    // Los horarios se calculan solos a partir de event.startTime. PENDIENTE: agenda propuesta, sin confirmar.
+    // Los horarios se calculan solos a partir de event.startTime. Ajuste de Axel (2026-11-07): IA aplicada 19:10 a 20:00,
+    // break 20:00 a 20:15, CAEIA 20:15 a 20:45; se sacó «Preguntas». `break: true` marca la pausa: se dibuja distinto y no
+    // cuenta como minutos de seminario (sí como duración total del evento).
+    // PENDIENTE: «Oferta de lanzamiento» (15 min) quedó después de CAEIA (20:45 a 21:00) y el networking se corrió a 21:30;
+    // Axel todavía no dijo si la oferta sigue.
     items: [
       { minutes: 10, title: 'Bienvenida y presentación de NIKI' },
-      { minutes: 30, title: 'IA aplicada al trabajo, con ejemplos reales' },
-      // PENDIENTE: la demo solo se puede prometer si el agente funciona en producción el 18/11.
-      { minutes: 25, title: 'Presentación de CAEIA, con demo' },
-      { minutes: 10, title: 'Preguntas' },
+      { minutes: 50, title: 'IA aplicada al trabajo, con ejemplos reales' },
+      { minutes: 15, title: 'Break', break: true },
+      // `featured: true` pinta la tarjeta entera de violeta: es la que más destaca (pedido de Axel, 2026-11-07, que también
+      // sacó «con demo» del título; la demo ya no se anuncia en la agenda).
+      { minutes: 30, title: 'Presentación de CAEIA', featured: true },
       { minutes: 15, title: 'Oferta de lanzamiento' },
     ],
     networking: { minutes: 30, title: 'Networking' },
@@ -293,76 +315,24 @@ export const content = {
       send: 'No pudimos guardar tu inscripción. Probá de nuevo en un momento.',
       tooMany: 'Hiciste muchos intentos seguidos. Esperá unos minutos y probá de nuevo.',
     },
+    // Cartel que sale al tocar «Quiero mi lugar» (con los datos ya completos), por encima de todo el formulario (pedido de
+    // Axel, 2026-11-09). «Sí voy a asistir» envía la inscripción; «OK, no iré» cierra el cartel y no guarda nada.
+    // Lo que va entre *asteriscos* se resalta.
+    confirm: {
+      title: '¡Atención!',
+      text: 'Registrate solo si *REALMENTE* vas a asistir, ya que es un seminario *MUY EXCLUSIVO* y con capacidad *LIMITADA*.',
+      yes: 'SÍ VOY A ASISTIR',
+      no: 'OK, no iré',
+      sending: 'Reservando…',
+    },
+    // Pantalla después de confirmar: solo el botón del grupo de WhatsApp (se sacaron «Agregar al calendario» y la encuesta).
     success: {
       title: 'Listo, {nombre}. Tu lugar está reservado.',
       text: 'Te esperamos el {fecha}, {hora} hs, en {lugar}.',
-      calendar: 'Agregar al calendario',
-      whatsapp: 'Sumarme al grupo de WhatsApp',
+      mustJoin: 'Tenés que entrar al grupo de WhatsApp sí o sí: ahí te avisamos todo lo del evento.',
+      whatsapp: 'Unirme al grupo de WhatsApp',
       whatsappNote: 'Tu número será visible para los otros integrantes. El grupo se elimina después del evento.',
     },
-  },
-
-  // Encuesta opcional que aparece en la pantalla de confirmación, después de inscribirse (idea de Axel, 2026-11-05; armada
-  // el 2026-11-06). Tono suave y sin nombrar ni poner precios de la competencia. Todas las preguntas son opcionales.
-  // PENDIENTE: Axel todavía no confirmó las opciones ni los rangos de precio (son una propuesta para ajustar).
-  // IMPORTANTE: si se cambian las opciones, cambiarlas también en supabase/functions/encuesta-evento/index.ts (si no, la
-  // función rechaza las respuestas) y volver a desplegar esa función.
-  survey: {
-    title: 'Ayudanos con tu opinión',
-    intro:
-      'En el evento vamos a hacer el lanzamiento de CAEIA, una app pensada para que facturar en ARCA sea más fácil. ¡Queremos tu opinión!',
-    note: 'Es opcional y lleva menos de 1 minuto.',
-    // Carrusel: una pregunta por pantalla. Tokens: {n}, {total}.
-    progress: 'Pregunta {n} de {total}',
-    back: 'Atrás',
-    skip: 'Omitir',
-    needOne: 'Elegí al menos una respuesta para poder enviar.',
-    questions: [
-      {
-        id: 'molestia',
-        label: '¿Qué es lo que más te molesta de facturar hoy?',
-        options: [
-          'Me lleva mucho tiempo',
-          'Es complicado y me confundo',
-          'Dependo de mi contador',
-          'Los errores y las correcciones',
-          'Cuando ARCA no funciona',
-          'Nada, no me molesta',
-        ],
-      },
-      {
-        id: 'gasto_mensual',
-        label: '¿Cuánto gastás por mes en facturar? (contador, app o sistema)',
-        options: ['Nada', 'Menos de $10.000', 'Entre $10.000 y $30.000', 'Más de $30.000', 'No sé'],
-      },
-      {
-        id: 'precio_justo',
-        label: '¿Cuánto te parecería justo pagar por mes por una app como esta?',
-        options: [
-          'Menos de $10.000',
-          'Entre $10.000 y $20.000',
-          'Entre $20.000 y $30.000',
-          'Entre $30.000 y $50.000',
-          'Más de $50.000',
-          'No pagaría',
-        ],
-      },
-      {
-        id: 'probaria_con_tarjeta',
-        label: '¿Probarías la app 10 días gratis si te piden la tarjeta?',
-        options: ['Sí', 'Tal vez', 'No'],
-      },
-    ],
-    open: {
-      id: 'imprescindible',
-      label: '¿Qué tendría que tener sí o sí para que la uses?',
-      placeholder: 'Contanos con tus palabras',
-    },
-    privacy: 'Usamos tus respuestas solo para ajustar la app.',
-    submit: 'Enviar mi opinión',
-    sending: 'Enviando…',
-    thanks: '¡Gracias! Tu opinión nos ayuda a ajustar la app antes del lanzamiento.',
-    error: 'No pudimos enviar tus respuestas. Probá de nuevo en un momento.',
   },
 
   // Pie de página: resumen + leyenda obligatoria (Disposición DNPDP 10/2008, hoy a cargo de la AAIP) + links a las dos páginas.
@@ -380,7 +350,7 @@ export const content = {
   // Contacto del responsable cargado por Axel el 2026-11-06 (`responsible.email` y `responsible.whatsapp`); si se vacían, las
   // páginas muestran «[completar contacto]».
   legal: {
-    updated: '6 de noviembre de 2026',
+    updated: '9 de noviembre de 2026',
     backToEvent: 'Volver a la página del evento',
     otherDocs: { privacy: 'Política de privacidad', terms: 'Términos y condiciones' },
     responsible: {
@@ -413,10 +383,9 @@ export const content = {
             'El tipo de persona que elegiste en «Soy…» (por ejemplo, dueño de negocio o emprendedor).',
             'El origen del link por el que llegaste (por ejemplo, Instagram), cuando viene en la dirección.',
             'La fecha y hora de tu inscripción y el texto del consentimiento que aceptaste.',
-            'Si querés, tus respuestas a una encuesta opcional sobre CAEIA (qué te molesta de facturar, cuánto gastás y cuánto pagarías).',
           ],
           p: [
-            'Los datos de la inscripción son obligatorios: sin ellos no podemos anotarte. La encuesta es opcional. No pedimos datos sensibles, clave fiscal ni datos bancarios.',
+            'Los datos de la inscripción son obligatorios: sin ellos no podemos anotarte. No pedimos datos sensibles, clave fiscal ni datos bancarios.',
             'Para evitar abusos en el formulario guardamos un código irreversible derivado de tu dirección IP, no la dirección en sí. Ese código se descarta al día siguiente.',
           ],
         },
@@ -426,8 +395,7 @@ export const content = {
             'Confirmar tu inscripción y organizar el evento (lista de asistentes e ingreso).',
             'Avisarte por WhatsApp y por mail sobre el evento: recordatorios y cambios.',
             'Contarte las novedades del lanzamiento de CAEIA, porque lo aceptaste al inscribirte.',
-            'Si respondés la encuesta opcional, usar tus respuestas para ajustar CAEIA y su precio antes del lanzamiento.',
-            'Sumarte al grupo de WhatsApp del evento, si vos lo pedís. Es voluntario.',
+            'Sumarte al grupo de WhatsApp del evento, donde avisamos todo lo del evento. Entrás vos, desde el botón de la pantalla de confirmación.',
             'Hacer estadísticas internas (cuántas personas se anotaron y de qué tipo).',
           ],
           p: ['No los usamos para otra cosa ni los vendemos. Tu consentimiento es libre y podés retirarlo cuando quieras.'],
@@ -528,7 +496,7 @@ export const content = {
         {
           h: 'Mensajes y grupo de WhatsApp',
           p: [
-            'Si lo aceptaste, te escribimos por WhatsApp y por mail sobre el evento. El grupo de WhatsApp es opcional: sus integrantes pueden ver los números de los demás. El grupo se elimina después del evento.',
+            'Si lo aceptaste, te escribimos por WhatsApp y por mail sobre el evento. El grupo de WhatsApp es el canal donde avisamos todo lo del evento, por eso te pedimos que entres; entrás vos, desde el botón de la confirmación, y sus integrantes pueden ver los números de los demás. El grupo se elimina después del evento.',
           ],
         },
         {

@@ -1,8 +1,8 @@
-import { useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
+import { createPortal } from 'react-dom'
 import { content } from '../content'
-import { calendarUrl, dateLabel, fill } from '../lib'
+import { dateLabel, fill } from '../lib'
 import { InlineCountdown } from './CountdownBar'
-import { Survey } from './Survey'
 import { Icon } from './ui'
 
 /** Bandera de Argentina simplificada (los emojis de banderas no se ven en Windows). */
@@ -58,7 +58,9 @@ export function RegistrationForm({ id }: { id: string }) {
   const [errors, setErrors] = useState<Errors>({})
   const [status, setStatus] = useState<'idle' | 'sending' | 'done'>('idle')
   const [sendError, setSendError] = useState('')
-  const [surveyToken, setSurveyToken] = useState<string | null>(null)
+  // Cartel «¡Atención!» que se muestra antes de enviar: solo se envía si la persona confirma que va a asistir.
+  const [confirming, setConfirming] = useState(false)
+  const formRef = useRef<HTMLFormElement>(null)
   const origin = useMemo(() => new URLSearchParams(window.location.search).get('o') ?? '', [])
 
   const set = <K extends keyof Values>(key: K, value: Values[K]) => {
@@ -66,18 +68,23 @@ export function RegistrationForm({ id }: { id: string }) {
     if (key in errors) setErrors((prev) => ({ ...prev, [key]: undefined }))
   }
 
-  async function onSubmit(ev: FormEvent<HTMLFormElement>) {
+  // Al tocar «Quiero mi lugar» solo se valida: el envío real pasa cuando confirman en el cartel.
+  function onSubmit(ev: FormEvent<HTMLFormElement>) {
     ev.preventDefault()
     const found = validate(values)
     setErrors(found)
     setSendError('')
     if (Object.keys(found).length > 0) return
+    setConfirming(true)
+  }
+
+  async function send() {
     setStatus('sending')
 
     // Dirección de la función `inscripcion-evento` (ver .env.example). No lleva ninguna clave.
     const endpoint = import.meta.env.VITE_INSCRIPCION_URL as string | undefined
     // Campo trampa anti-bots: las personas no lo ven, así que va vacío.
-    const trap = new FormData(ev.currentTarget).get('website')
+    const trap = formRef.current ? new FormData(formRef.current).get('website') : ''
 
     // Sin dirección configurada solo se simula en desarrollo. En la página publicada NUNCA se finge
     // que se guardó: si falta la dirección, se muestra el error y no se pierde una inscripción en silencio.
@@ -88,9 +95,13 @@ export function RegistrationForm({ id }: { id: string }) {
           whatsapp: `+54${nationalNumber(values.whatsapp)}`,
           origen: origin || null,
         })
-        window.setTimeout(() => setStatus('done'), 700)
+        window.setTimeout(() => {
+          setConfirming(false)
+          setStatus('done')
+        }, 700)
       } else {
         setSendError(f.errors.send)
+        setConfirming(false)
         setStatus('idle')
       }
       return
@@ -114,9 +125,7 @@ export function RegistrationForm({ id }: { id: string }) {
         }),
       })
       if (res.ok) {
-        // El servidor devuelve un código para enlazar la encuesta opcional (ver Survey.tsx).
-        const data = (await res.json().catch(() => ({}))) as { token?: string }
-        setSurveyToken(typeof data.token === 'string' ? data.token : null)
+        setConfirming(false)
         setStatus('done')
         return
       }
@@ -124,6 +133,8 @@ export function RegistrationForm({ id }: { id: string }) {
     } catch {
       setSendError(f.errors.send)
     }
+    // Si falló, se cierra el cartel para que el error se vea sobre el botón del formulario.
+    setConfirming(false)
     setStatus('idle')
   }
 
@@ -137,14 +148,11 @@ export function RegistrationForm({ id }: { id: string }) {
         </span>
         <h3>{fill(s.title, { nombre: firstName })}</h3>
         <p className="muted">{fill(s.text, { fecha: dateLabel, lugar: e.venueShort })}</p>
+        <p className="done__must">{s.mustJoin}</p>
         <div className="done__actions">
-          <a className="btn btn--ghost" href={calendarUrl()} target="_blank" rel="noreferrer">
-            <Icon name="calendar" size={20} />
-            {s.calendar}
-          </a>
           {e.whatsappGroupUrl ? (
-            <a className="btn" href={e.whatsappGroupUrl} target="_blank" rel="noreferrer">
-              <Icon name="message" size={20} />
+            <a className="btn btn--lg" href={e.whatsappGroupUrl} target="_blank" rel="noreferrer">
+              <Icon name="message" size={22} />
               {s.whatsapp}
             </a>
           ) : (
@@ -154,7 +162,6 @@ export function RegistrationForm({ id }: { id: string }) {
           )}
         </div>
         {(e.whatsappGroupUrl || import.meta.env.DEV) && <p className="tiny">{s.whatsappNote}</p>}
-        {(surveyToken || import.meta.env.DEV) && <Survey token={surveyToken} />}
       </div>
     )
   }
@@ -163,7 +170,8 @@ export function RegistrationForm({ id }: { id: string }) {
   const sending = status === 'sending'
 
   return (
-    <form className="glass glass--glow form" id={id} onSubmit={onSubmit} noValidate>
+    <>
+    <form className="glass glass--glow form" id={id} onSubmit={onSubmit} noValidate ref={formRef}>
       <div className="form__head">
         <h3>{f.title}</h3>
         <p className="muted">{f.subtitle}</p>
@@ -239,9 +247,6 @@ export function RegistrationForm({ id }: { id: string }) {
         {errors.tipo && <span className="error">{errors.tipo}</span>}
       </div>
 
-      {
-      }
-
       <div className="field">
         <label className="check" htmlFor={fid('consent')}>
           <input id={fid('consent')} type="checkbox" checked={values.consent} onChange={(ev) => set('consent', ev.target.checked)} aria-invalid={!!errors.consent} />
@@ -278,5 +283,78 @@ export function RegistrationForm({ id }: { id: string }) {
       <InlineCountdown />
       <p className="reassure">{f.reassurance}</p>
     </form>
+    {confirming && <ConfirmDialog sending={sending} onYes={send} onNo={() => setConfirming(false)} />}
+    </>
+  )
+}
+
+/** Resalta lo que va entre *asteriscos* como con marcador (en el cartel no sirve el degradé de los títulos). */
+function Marked({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(/\*(.+?)\*/g).map((part, i) =>
+        i % 2 === 1 ? (
+          <strong key={i} className="modal__em">
+            {part}
+          </strong>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  )
+}
+
+/** Cartel «¡Atención!» por encima de todo el formulario: «SÍ VOY A ASISTIR» envía la inscripción, «OK, no iré» la cancela. */
+function ConfirmDialog({ sending, onYes, onNo }: { sending: boolean; onYes: () => void; onNo: () => void }) {
+  const c = f.confirm
+  const box = useRef<HTMLDivElement>(null)
+  // Se guardan en refs para que el efecto de abajo corra una sola vez (si no, cada render volvería a mover el foco).
+  const sendingRef = useRef(sending)
+  const onNoRef = useRef(onNo)
+  sendingRef.current = sending
+  onNoRef.current = onNo
+
+  useEffect(() => {
+    // El foco va al cartel (no a un botón), para que un Enter o un espacio de más no confirme sin querer.
+    box.current?.focus()
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const onKey = (ev: KeyboardEvent) => {
+      if (ev.key === 'Escape' && !sendingRef.current) onNoRef.current()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prevOverflow
+    }
+  }, [])
+
+  return createPortal(
+    <div
+      className="modal"
+      onMouseDown={(ev) => {
+        if (ev.target === ev.currentTarget && !sending) onNo()
+      }}
+    >
+      <div className="modal__box" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-text" tabIndex={-1} ref={box}>
+        <span className="modal__icon">
+          <Icon name="alert" size={32} />
+        </span>
+        <h3 id="confirm-title">{c.title}</h3>
+        <p id="confirm-text" className="modal__text">
+          <Marked text={c.text} />
+        </p>
+        <div className="modal__actions">
+          <button type="button" className="btn btn--lg" onClick={onYes} disabled={sending}>
+            {sending ? c.sending : c.yes}
+          </button>
+          <button type="button" className="btn btn--ghost" onClick={onNo} disabled={sending}>
+            {c.no}
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body,
   )
 }
