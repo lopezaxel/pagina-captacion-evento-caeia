@@ -160,6 +160,16 @@ a {
     0 0 52px rgba(139, 92, 246, 0.28),
     0 24px 60px rgba(0, 0, 0, 0.4);
 }
+/* Sección del problema (pedido de Axel, 2026-11-10): toda en rojo para que se lea como problema. Mismo rojo del cronómetro. */
+.glass--red {
+  border-color: rgba(248, 113, 113, 0.6);
+  background: linear-gradient(160deg, rgba(127, 29, 29, 0.62) 0%, rgba(58, 10, 16, 0.82) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 0 0 1px rgba(239, 68, 68, 0.16),
+    0 0 60px rgba(239, 68, 68, 0.3),
+    0 24px 60px rgba(0, 0, 0, 0.4);
+}
 .glass--glow {
   border-color: rgba(139, 92, 246, 0.5);
   box-shadow:
@@ -1042,6 +1052,16 @@ select option {
 .statement {
   padding: 30px 22px;
 }
+.statement .kicker {
+  color: #fca5a5;
+}
+.statement .kicker::before {
+  background: #f87171;
+}
+.statement .tl {
+  background-image: linear-gradient(95deg, #fecaca 0%, #f87171 100%);
+  filter: drop-shadow(0 0 22px rgba(239, 68, 68, 0.55));
+}
 .statement__title {
   font-family: var(--font-display);
   font-weight: 700;
@@ -1052,53 +1072,20 @@ select option {
   max-width: 22ch;
   text-wrap: balance;
 }
-/* Lista de problemas con una X: cosas que le pasan mal a un negocio. Rosa suave (el mismo de los errores del formulario). */
-.crosses {
-  display: grid;
-  gap: 10px;
-  margin: 0 0 26px;
-  max-width: 900px;
-}
-.cross {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 12px 16px 12px 12px;
-  border-radius: 16px;
-  border: 1px solid rgba(251, 113, 133, 0.3);
-  background: rgba(251, 113, 133, 0.08);
-  font-size: clamp(17px, 4.4vw, 20px);
-  font-weight: 600;
-  line-height: 1.25;
-}
-.cross__x {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  color: #fda4af;
-  background: rgba(251, 113, 133, 0.16);
-  border: 1px solid rgba(251, 113, 133, 0.55);
-}
-.cross__x .icon {
-  stroke-width: 2.4;
-}
-/* Tarjeta destacada del problema: la frase clave, pintada entera con el degradé de marca (azul a violeta). */
+/* Tarjeta destacada del problema: la frase clave, pintada entera de rojo (como toda la sección). */
 .callout {
   position: relative;
   margin-top: 18px;
   padding: 30px 24px;
   border-radius: var(--radius);
   text-align: center;
-  background: linear-gradient(120deg, var(--violet-deep) 0%, var(--violet) 100%);
-  border: 1px solid rgba(221, 214, 254, 0.75);
+  background: linear-gradient(120deg, #991b1b 0%, #dc2626 100%);
+  border: 1px solid rgba(254, 202, 202, 0.8);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.4),
-    0 0 0 1px rgba(167, 139, 250, 0.5),
-    0 0 60px rgba(139, 92, 246, 0.55),
-    0 20px 50px rgba(76, 29, 149, 0.5);
+    0 0 0 1px rgba(248, 113, 113, 0.5),
+    0 0 60px rgba(239, 68, 68, 0.5),
+    0 20px 50px rgba(127, 29, 29, 0.55);
   overflow: hidden;
 }
 .callout::before {
@@ -1106,7 +1093,7 @@ select option {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(60% 120% at 0% 0%, rgba(56, 189, 248, 0.35), rgba(56, 189, 248, 0) 70%);
+  background: radial-gradient(60% 120% at 0% 0%, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 70%);
 }
 .callout p {
   position: relative;
@@ -1124,139 +1111,56 @@ select option {
   padding: 0 0.12em;
   border-radius: 8px;
   background: #fff;
-  color: var(--violet-deep);
+  color: #991b1b;
 }
-.statement__copy {
-  min-width: 0;
-}
-.statement__grid {
+/* Dos columnas: lo que la gente ya hace con la IA frente a lo que casi nadie le mostró (en rojo, como toda la sección). */
+.compare {
   display: grid;
-  gap: 26px;
-}
-/* En celular el gráfico va antes de la lista; en escritorio, a la derecha. */
-.statement__grid .loopviz {
-  order: -1;
-}
-
-/* Gráfico animado del problema: una semana donde las mismas tareas vuelven a aparecer cada día. */
-.loopviz {
-  display: grid;
-  gap: 16px;
-  align-self: center;
-  padding: 18px 16px 16px;
-  border-radius: 22px;
-  border: 1px solid rgba(139, 92, 246, 0.4);
-  background: rgba(10, 14, 26, 0.5);
-  box-shadow: 0 0 40px rgba(139, 92, 246, 0.16);
-}
-.loopviz__top {
-  display: flex;
-  align-items: center;
   gap: 14px;
 }
-.loopviz__clock {
-  flex: none;
-  width: 84px;
-  height: 84px;
-  filter: drop-shadow(0 0 12px rgba(14, 165, 233, 0.5));
+.compare__col {
+  padding: 16px 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  background: rgba(248, 113, 113, 0.08);
 }
-.loopviz__face {
-  fill: rgba(14, 165, 233, 0.08);
-  stroke: var(--blue-soft);
-  stroke-width: 3;
+.compare__col--next {
+  border-color: rgba(248, 113, 113, 0.75);
+  background: rgba(220, 38, 38, 0.24);
+  box-shadow: 0 0 36px rgba(239, 68, 68, 0.3);
 }
-.loopviz__ticks {
-  stroke: var(--muted);
-  stroke-width: 3;
-  stroke-linecap: round;
-}
-.loopviz__hand {
-  stroke-linecap: round;
-  transform-origin: 50px 50px;
-  animation: loop-spin 2.4s linear infinite;
-}
-.loopviz__hand--min {
-  stroke: var(--blue-soft);
-  stroke-width: 3.5;
-}
-.loopviz__hand--hour {
-  stroke: var(--violet);
-  stroke-width: 4.5;
-  animation-duration: 14s;
-}
-.loopviz__pin {
-  fill: #fff;
-}
-.loopviz__caption {
-  font-family: var(--font-display);
+.compare__label {
+  margin-bottom: 12px;
+  font-size: 12.5px;
   font-weight: 700;
-  font-size: clamp(18px, 4.8vw, 22px);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
-}
-.loopviz__week {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-}
-.loopviz__day {
-  display: grid;
-  gap: 6px;
-  align-content: start;
-  padding: 8px 6px 10px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-}
-.loopviz__label {
-  margin-bottom: 2px;
-  text-align: center;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: #fca5a5;
 }
-.loopviz__block {
-  display: block;
-  height: 14px;
-  border-radius: 6px;
-  border: 1px solid rgba(251, 113, 133, 0.8);
-  background: rgba(251, 113, 133, 0.5);
-  animation: loop-block 6s ease-in-out infinite;
-  animation-delay: calc(var(--i) * 0.28s + var(--j) * 0.14s);
+.compare__col--next .compare__label {
+  color: #fecaca;
 }
-.loopviz__block:nth-of-type(2) {
-  width: 72%;
+.compare__list {
+  display: grid;
+  gap: 10px;
 }
-.loopviz__block:nth-of-type(3) {
-  width: 88%;
+.compare__list li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: clamp(16px, 4.2vw, 18px);
+  font-weight: 600;
+  line-height: 1.3;
 }
-.loopviz__block:nth-of-type(4) {
-  width: 58%;
+.compare__list .icon {
+  flex: none;
+  margin-top: 2px;
+  color: #fca5a5;
 }
-@keyframes loop-spin {
-  to {
-    transform: rotate(360deg);
-  }
+.compare__col--next .compare__list .icon {
+  color: #fecaca;
 }
-@keyframes loop-block {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px) scaleX(0.6);
-  }
-  14%,
-  72% {
-    opacity: 1;
-    transform: none;
-  }
-  88%,
-  100% {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-}
+
 .grid3 {
   display: grid;
   gap: 16px;
@@ -2048,25 +1952,9 @@ select option {
   .foryou {
     padding: 48px 56px;
   }
-  .crosses {
+  .compare {
     grid-template-columns: 1fr 1fr;
-    gap: 12px 14px;
-  }
-  .statement__grid {
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 48px;
-    align-items: center;
-  }
-  .statement__grid .loopviz {
-    order: 0;
-    padding: 24px 22px 22px;
-  }
-  .statement .crosses {
-    grid-template-columns: 1fr;
-  }
-  .loopviz__clock {
-    width: 96px;
-    height: 96px;
+    gap: 20px;
   }
   .foryou__groups {
     grid-template-columns: 1fr 1fr;
@@ -2094,10 +1982,7 @@ select option {
   .closing::after,
   .modal,
   .modal__box,
-  .loopviz__hand,
-  .loopviz__block {
-    animation: none;
-  }
+
   .reveal {
     opacity: 1;
     transform: none;

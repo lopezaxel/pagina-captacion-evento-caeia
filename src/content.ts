@@ -81,7 +81,6 @@ export const content = {
   forYou: {
     kicker: 'Para quién es',
     title: '¿Tenés un negocio? Este seminario *es para vos*.',
-    intro: 'Da igual el rubro y cómo tributes.',
     groups: [
       {
         label: 'Si sos',
@@ -110,22 +109,28 @@ export const content = {
     ],
   },
 
-  // Versión C elegida por Axel (2026-11-06): arranca con el dolor del lector y lista las mismas tareas que resuelven los
-  // ejemplos de "Qué vas a ver". No menciona CAEIA.
+  // Reescrita el 2026-11-10 por pedido de Axel (antes: «¿Cuántas horas por semana se te van en tareas que se repiten?»).
+  // Concepto: todos ya usamos la IA, pero solo para lo personal o para un flyer; nadie nos mostró cómo ponerla a trabajar
+  // adentro del negocio (un agente, una app). Título A, columnas, escalera y tarjeta 2 salieron de una crítica de copy.
+  // Lo que va entre *asteriscos* se resalta. Sin cifras, sin mencionar CAEIA.
   problem: {
     kicker: 'El problema',
-    title: '¿Cuántas horas por semana se te van en *tareas que se repiten*?',
-    // Tareas que se repiten: se muestran como lista con una X (cosas que le pasan mal a un negocio).
-    items: ['Pasar listas de precios', 'Contestar los mismos mensajes', 'Armar planillas', 'Ordenar turnos'],
-    // Tarjeta destacada (pedido de Axel, 2026-11-09; reemplaza al párrafo «Mucha gente usó la IA para hacer un flyer…»).
-    // Lo que va entre *asteriscos* se resalta. Se corrigieron «nos a enseñado» y «laborles» del texto original.
-    callout: 'Actualmente usamos la IA para cosas personales, pero *NADIE* nos ha enseñado a usarla en nuestras actividades laborales.',
-    // Gráfico animado (Problem en Sections.tsx): una semana de trabajo donde las mismas tareas vuelven a aparecer todos los
-    // días, con un reloj que gira rápido. Sin cifras. Las tareas son las de `items` (un bloque por tarea y por día).
-    visual: {
-      caption: 'La misma semana, una y otra vez',
-      days: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'],
+    title: 'Ya usás la IA, pero *solo para vos*',
+    // Dos columnas: lo que ya hace la gente frente a lo que casi nadie le mostró. La segunda NO usa las palabras
+    // automatización, agente ni app (pedido de Axel, 2026-11-10): eso ya lo muestra «Qué vas a ver». Va por el lado de cómo
+    // implementarla, llegar a más clientes y ordenar la administración, dicho como tema («cómo usarla para…») y no como
+    // promesa de resultados.
+    compare: {
+      before: { label: 'Lo que ya hacés', items: ['Pedirle ideas', 'Preguntarle dudas', 'Hacer un flyer'] },
+      after: {
+        label: 'Lo que nadie te mostró',
+        items: ['Cómo ponerla a trabajar en tu negocio', 'Cómo usarla para llegar a más clientes', 'Cómo usarla para ordenar tu administración'],
+      },
     },
+    // Tarjeta destacada. 2026-11-10: Axel aplicó la sugerencia de la crítica de copy; la versión anterior («Ya la usás en tu día a
+    // día. Lo que falta es que alguien te muestre cómo meterla adentro de tu negocio») repetía el «Ya usás» del título y
+    // anticipaba el «cómo» de «Qué vas a ver». Esta cierra sobre la causa y deja el «cómo» para la sección de abajo.
+    callout: 'Casi todos la usamos para lo nuestro. Lo que falta es que *alguien nos muestre* el paso siguiente.',
   },
 
   // Sección única (fusiona "Qué vas a ver" y "Los tres escalones", decisión de Axel 2026-11-06). Se ordena por 3 clases de
@@ -245,7 +250,7 @@ export const content = {
 
   venue: {
     kicker: 'Dónde es',
-    title: 'Cámara de Comercio de *Salta*',
+    title: 'Salón de la Cámara de Comercio de *Salta*',
     text: 'Entrada gratis con inscripción previa. Solo presencial, en Salta Capital.',
     button: 'Cómo llegar',
   },

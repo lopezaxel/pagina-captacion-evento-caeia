@@ -8,6 +8,13 @@
 //                            (ej.: https://evento.caeia.app). Sin esto solo acepta localhost.
 //   - IP_SALT              → texto secreto largo y al azar, para guardar un hash de la IP y no la IP.
 //   - RATE_LIMIT_MAX       → (opcional) intentos por IP cada 10 minutos. Por defecto 30.
+//   - EVENTO_RESEND_API_KEY → (opcional) API key de Resend creada SOLO para el evento. Con esta y EVENTO_NOTIFY_EMAIL la función le
+//                            avisa a Axel por mail cada vez que se guarda una inscripción nueva (los duplicados no avisan).
+//   - EVENTO_NOTIFY_EMAIL  → (opcional) mail donde llegan los avisos. Sin la key o sin esto, no se avisa nada.
+//   - EVENTO_MAIL_FROM     → (opcional) remitente. Por defecto «Evento CAEIA <evento@caeia.app>» (dominio ya verificado en Resend).
+//   Ojo: los secretos de Supabase son de TODO el proyecto (compartido con CAEIA, que ya usa RESEND_API_KEY para el onboarding),
+//   por eso estos llevan el prefijo EVENTO_: así no se pisa nada de CAEIA.
+//   El aviso lleva poco a propósito: nombre, tipo, origen y total. No lleva WhatsApp ni mail de la persona.
 //
 // Por qué conexión directa y no supabase-js: el schema `evento_caeia` no está expuesto a la API
 // (cambiar eso afectaría a CAEIA), así que se escribe con SQL directo y consultas parametrizadas.
@@ -35,6 +42,16 @@ const ALLOWED_ORIGINS = (
   .split(',')
   .map((s) => s.trim().replace(/\/$/, ''))
   .filter(Boolean)
+
+// Disponible en el runtime de las Edge Functions de Supabase: deja terminar una tarea después de responder.
+declare const EdgeRuntime: { waitUntil(promise: Promise<unknown>): void }
+
+const RESEND_API_KEY = Deno.env.get('EVENTO_RESEND_API_KEY')
+const NOTIFY_EMAIL = Deno.env.get('EVENTO_NOTIFY_EMAIL')
+const MAIL_FROM = Deno.env.get('EVENTO_MAIL_FROM') ?? 'Evento CAEIA <evento@caeia.app>'
+
+// Hitos que se destacan en el asunto del aviso: cada 10 desde 20 hasta 100, y después cada 50.
+const esHito = (n: number) => n >= 20 && ((n <= 100 && n % 10 === 0) || (n > 100 && n % 50 === 0))
 
 const sql = postgres(Deno.env.get('SUPABASE_DB_URL')!, {
   max: 1,
@@ -72,6 +89,32 @@ function clean(value: unknown, max: number, keepNewlines = false): string {
 async function sha256(text: string): Promise<string> {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))
   return Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, '0')).join('')
+}
+
+/** Le avisa a Axel por mail que hay una inscripción nueva. Nunca rompe la inscripción: si algo falla, solo lo registra. */
+async function avisarInscripcion(nombre: string, tipo: string, origen: string | null) {
+  if (!RESEND_API_KEY || !NOTIFY_EMAIL) return
+  try {
+    const [{ n }] = await sql<{ n: number }[]>`select count(*)::int as n from evento_caeia.inscripciones`
+    const asunto = esHito(n) ? `Ya son ${n} inscriptos al evento del 18/11` : `Nueva inscripción (#${n}): ${nombre}`
+    // Texto plano (no HTML): el nombre lo escribe cualquier persona y así no puede meter nada raro en el mail.
+    const text = [
+      esHito(n) ? `Llegaste a ${n} inscriptos.` : 'Se anotó una persona nueva.',
+      '',
+      `Nombre: ${nombre}`,
+      `Tipo: ${tipo}`,
+      `Origen del link: ${origen ?? 'sin origen'}`,
+      `Total de inscriptos: ${n}`,
+    ].join('\n')
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: MAIL_FROM, to: [NOTIFY_EMAIL], subject: asunto, text }),
+    })
+    if (!res.ok) console.error('inscripcion-evento: Resend respondió', res.status)
+  } catch (err) {
+    console.error('inscripcion-evento: error al avisar', err instanceof Error ? err.name : 'desconocido')
+  }
 }
 
 Deno.serve(async (req) => {
@@ -148,6 +191,8 @@ Deno.serve(async (req) => {
     // Código para enlazar la encuesta opcional. Si la persona ya estaba anotada se devuelve uno al azar que no
     // corresponde a ninguna fila: así la respuesta es idéntica y nadie puede averiguar quién está anotado.
     const token = filas[0]?.encuesta_token ?? crypto.randomUUID()
+    // Solo si la inscripción es nueva (un duplicado no se guarda y no avisa). Se responde igual de rápido: el aviso corre aparte.
+    if (filas[0]) EdgeRuntime.waitUntil(avisarInscripcion(nombre, tipo, origen))
     return reply(200, { ok: true, token }, origin)
   } catch (err) {
     // Nunca se registran los datos de la persona, solo el tipo de error.

@@ -105,7 +105,7 @@ export function ForYou() {
       <div className="container">
         <Reveal>
           <div className="glass glass--violet foryou">
-            <Heading kicker={f.kicker} title={f.title} intro={f.intro} />
+            <Heading kicker={f.kicker} title={f.title} />
             <div className="foryou__groups">
               {f.groups.map((g) => (
                 <div key={g.label}>
@@ -127,60 +127,35 @@ export function ForYou() {
   )
 }
 
-/** Gráfico animado: una semana donde las mismas tareas vuelven a aparecer cada día, con un reloj que gira rápido. */
-function LoopVisual() {
-  const p = content.problem
-  return (
-    <div className="loopviz" role="img" aria-label={p.visual.caption}>
-      <div className="loopviz__top">
-        <svg className="loopviz__clock" viewBox="0 0 100 100" aria-hidden="true">
-          <circle cx="50" cy="50" r="44" className="loopviz__face" />
-          <path d="M50 10v7M90 50h-7M50 90v-7M10 50h7" className="loopviz__ticks" />
-          <line x1="50" y1="50" x2="50" y2="29" className="loopviz__hand loopviz__hand--hour" />
-          <line x1="50" y1="50" x2="50" y2="16" className="loopviz__hand loopviz__hand--min" />
-          <circle cx="50" cy="50" r="3.5" className="loopviz__pin" />
-        </svg>
-        <p className="loopviz__caption">{p.visual.caption}</p>
-      </div>
-      <div className="loopviz__week" aria-hidden="true">
-        {p.visual.days.map((d, i) => (
-          <div key={d} className="loopviz__day">
-            <b className="loopviz__label">{d}</b>
-            {p.items.map((t, j) => (
-              <span key={t} className="loopviz__block" style={{ '--i': i, '--j': j } as React.CSSProperties} />
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 export function Problem() {
   const p = content.problem
+  const columns = [
+    { key: 'before', col: p.compare.before, icon: 'check', cls: '' },
+    { key: 'after', col: p.compare.after, icon: 'arrow', cls: ' compare__col--next' },
+  ]
   return (
     <section className="section">
       <div className="container">
         <Reveal>
-          <div className="glass glass--violet statement">
+          <div className="glass glass--red statement">
             <p className="kicker">{p.kicker}</p>
             <h2 className="statement__title">
               <Rich text={p.title} />
             </h2>
-            <div className="statement__grid">
-              <div className="statement__copy">
-                <ul className="crosses">
-                  {p.items.map((item) => (
-                    <li key={item} className="cross">
-                      <span className="cross__x">
-                        <Icon name="x" size={16} />
-                      </span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <LoopVisual />
+            <div className="compare">
+              {columns.map(({ key, col, icon, cls }) => (
+                <div key={key} className={`compare__col${cls}`}>
+                  <p className="compare__label">{col.label}</p>
+                  <ul className="compare__list">
+                    {col.items.map((item) => (
+                      <li key={item}>
+                        <Icon name={icon} size={18} />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           </div>
         </Reveal>
