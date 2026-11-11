@@ -105,6 +105,7 @@ const PATHS: Record<string, ReactNode> = {
       <path d="M12 9v4M12 17h.01" />
     </>
   ),
+  heart: <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8Z" />,
   check: <path d="M20 6 9 17l-5-5" />,
   x: <path d="M18 6 6 18M6 6l12 12" />,
   plus: <path d="M12 5v14M5 12h14" />,

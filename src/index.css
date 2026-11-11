@@ -935,6 +935,56 @@ select option {
   font-size: 13px;
   color: var(--muted);
 }
+/* Tarjeta debajo del botón: pedido amable y opcional de un alimento no perecedero (Fundación FIEL). Destacada a pedido de Axel
+   (2026-11-11): fondo violeta lleno, borde claro y resplandor, pero sin competir con el botón de arriba. */
+.donation {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 10px;
+  padding: 20px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(221, 214, 254, 0.75);
+  background: linear-gradient(135deg, rgba(109, 40, 217, 0.62) 0%, rgba(139, 92, 246, 0.4) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 0 0 1px rgba(167, 139, 250, 0.35),
+    0 0 40px rgba(139, 92, 246, 0.5);
+}
+.donation__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(135deg, var(--violet-deep), var(--violet));
+  border: 1px solid rgba(221, 214, 254, 0.8);
+  box-shadow: 0 0 28px rgba(139, 92, 246, 0.85);
+}
+.donation__label {
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #ddd6fe;
+}
+.donation__text {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: #fff;
+}
+.donation__em {
+  font-weight: 800;
+  color: #fff;
+  text-decoration: underline;
+  text-decoration-color: #c4b5fd;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
 
 /* Cronómetro chico junto al formulario */
 .inline-cd {

@@ -29,6 +29,13 @@ export const content = {
 
   nav: { cta: 'Quiero mi lugar' },
 
+  // Píxel de Meta (Facebook e Instagram) para los anuncios. El ID es público (va en el código de la página), no es un secreto.
+  // Creado por Axel el 2026-11-11 en Meta Events Manager (conjunto de datos «Evento CAEIA 18-11»). Para apagarlo: dejar vacío.
+  // Eventos: PageView (al abrir la página) y Lead (cuando la inscripción se guarda). Ver src/pixel.ts.
+  analytics: {
+    metaPixelId: '1134377065911958',
+  },
+
   // Cronómetro fijo arriba. Cuenta hasta event.dateISO + event.startTime; se oculta cuando termina el evento.
   countdown: {
     label: 'El seminario empieza en',
@@ -261,6 +268,13 @@ export const content = {
     // Tokens: {hora}, {direccion}, {duracion}
     items: [
       { q: '¿Es gratis?', a: 'Sí. La entrada es gratuita, solo hace falta inscribirte antes.' },
+      // Pedido de Axel (2026-11-11): es OPCIONAL, se pide amablemente y la entrada es gratis para todos, lleven algo o no.
+      // PENDIENTE: confirmar con la Fundación FIEL que está de acuerdo con que se la nombre en este pedido (la regla del proyecto
+      // es que la Fundación sepa dónde figura) y a dónde se entrega lo recolectado.
+      {
+        q: '¿Tengo que llevar algo?',
+        a: 'No es obligatorio, pero te pedimos amablemente que, si podés, traigas un alimento no perecedero. La Fundación FIEL ayuda a los comedores comunitarios de Salta, y entre todos podemos sumar. La entrada es gratis para todos, lleves algo o no.',
+      },
       { q: '¿Dónde queda?', a: 'En la Cámara de Comercio e Industria de Salta, {direccion}.' },
       {
         q: '¿Cuánto dura?',
@@ -284,6 +298,13 @@ export const content = {
     emailRequired: true,
     // Frase corta bajo el botón: baja la fricción de anotarse.
     reassurance: 'Gratis y con cupos limitados. Te anotás en menos de 30 segundos.',
+    // Tarjeta suave debajo del botón (pedido de Axel, 2026-11-11; Alfredo, de la Fundación FIEL, dijo que se haga saber). Es un pedido
+    // amable y opcional: la entrada es gratis para todos. Usa la misma idea que la pregunta «¿Tengo que llevar algo?» del FAQ.
+    // 2026-11-11: Axel pidió destacarla más. Lo que va entre *asteriscos* se resalta en blanco y subrayado.
+    donation: {
+      label: 'Pedido solidario',
+      text: 'Te pedimos amablemente que, si podés, traigas un *alimento no perecedero*, ya que la Fundación FIEL ayuda a los *comedores comunitarios* de la ciudad.',
+    },
     labels: {
       nombre: 'Nombre y apellido',
       whatsapp: 'WhatsApp',
@@ -344,7 +365,7 @@ export const content = {
   privacy: {
     id: 'privacidad',
     title: 'Aviso de privacidad',
-    text: 'Usamos tus datos solo para organizar el evento y mantenerte al tanto de lo que pase antes y después. No los vendemos ni los cedemos a otras empresas.',
+    text: 'Usamos tus datos solo para organizar el evento y mantenerte al tanto de lo que pase antes y después. No los vendemos ni los cedemos a otras empresas. Para medir los anuncios usamos el píxel de Meta, que recibe datos de navegación, no tu nombre ni tus datos de contacto.',
     legend:
       'El titular de los datos personales tiene la facultad de ejercer el derecho de acceso a los mismos en forma gratuita a intervalos no inferiores a seis meses, salvo que se acredite un interés legítimo al efecto conforme lo establecido en el artículo 14, inciso 3 de la Ley Nº 25.326. La Agencia de Acceso a la Información Pública, en su carácter de Órgano de Control de la Ley Nº 25.326, tiene la atribución de atender las denuncias y reclamos que interpongan quienes resulten afectados en sus derechos por incumplimiento de las normas vigentes en materia de protección de datos personales.',
   },
@@ -355,7 +376,7 @@ export const content = {
   // Contacto del responsable cargado por Axel el 2026-11-06 (`responsible.email` y `responsible.whatsapp`); si se vacían, las
   // páginas muestran «[completar contacto]».
   legal: {
-    updated: '9 de noviembre de 2026',
+    updated: '11 de noviembre de 2026',
     backToEvent: 'Volver a la página del evento',
     otherDocs: { privacy: 'Política de privacidad', terms: 'Términos y condiciones' },
     responsible: {
@@ -402,13 +423,14 @@ export const content = {
             'Contarte las novedades del lanzamiento de CAEIA, porque lo aceptaste al inscribirte.',
             'Sumarte al grupo de WhatsApp del evento, donde avisamos todo lo del evento. Entrás vos, desde el botón de la pantalla de confirmación.',
             'Hacer estadísticas internas (cuántas personas se anotaron y de qué tipo).',
+            'Medir el resultado de los anuncios del evento con el píxel de Meta (por ejemplo, cuántas personas visitaron la página y cuántas se inscribieron) y mostrar los anuncios a quienes la visitaron. Para eso no usamos tu nombre, tu WhatsApp ni tu mail.',
           ],
           p: ['No los usamos para otra cosa ni los vendemos. Tu consentimiento es libre y podés retirarlo cuando quieras.'],
         },
         {
           h: 'Con quién los compartimos',
           p: [
-            'Para que la página funcione usamos proveedores técnicos que guardan o procesan los datos por nuestra cuenta: Supabase (base de datos), Vercel (alojamiento de la página), Google (mapa que se muestra en la página), WhatsApp de Meta (mensajes y grupo del evento) y, cuando enviemos recordatorios por mail, un servicio de correo electrónico.',
+            'Para que la página funcione usamos proveedores técnicos que guardan o procesan los datos por nuestra cuenta: Supabase (base de datos), Vercel (alojamiento de la página), Google (mapa que se muestra en la página), Meta (píxel de medición de anuncios y WhatsApp, para los mensajes y el grupo del evento) y un servicio de correo electrónico (avisos y, cuando los enviemos, recordatorios por mail).',
             'No cedemos tus datos a otras empresas ni personas, salvo que una autoridad competente lo exija.',
           ],
         },
@@ -421,7 +443,8 @@ export const content = {
         {
           h: 'Cookies',
           p: [
-            'Esta página no usa cookies propias ni herramientas de análisis o de publicidad. El mapa de «Dónde es» lo muestra Google, y Google puede usar cookies al cargarlo, según su propia política.',
+            'Esta página no usa cookies propias. Sí usa el píxel de Meta (Facebook e Instagram) para medir los anuncios del evento: Meta puede guardar cookies e identificadores en tu navegador y recibir datos como tu dirección IP, el navegador que usás, las páginas que visitás y que completaste la inscripción. No le enviamos tu nombre, tu WhatsApp ni tu mail. Para limitarlo podés cambiar tus preferencias de anuncios en tu cuenta de Facebook o Instagram, o usar un bloqueador de rastreadores en tu navegador.',
+            'El mapa de «Dónde es» lo muestra Google, y Google puede usar cookies al cargarlo, según su propia política.',
           ],
         },
         {

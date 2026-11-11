@@ -4,6 +4,7 @@ import { content } from '../content'
 import { dateLabel, fill } from '../lib'
 import { InlineCountdown } from './CountdownBar'
 import { Icon } from './ui'
+import { trackLead } from '../pixel'
 
 /** Bandera de Argentina simplificada (los emojis de banderas no se ven en Windows). */
 function FlagAR() {
@@ -125,6 +126,7 @@ export function RegistrationForm({ id }: { id: string }) {
         }),
       })
       if (res.ok) {
+        trackLead() // Le avisa a Meta que alguien se inscribió (sin datos personales), para medir los anuncios.
         setConfirming(false)
         setStatus('done')
         return
@@ -282,6 +284,17 @@ export function RegistrationForm({ id }: { id: string }) {
       </button>
       <InlineCountdown />
       <p className="reassure">{f.reassurance}</p>
+      <aside className="donation">
+        <span className="donation__icon">
+          <Icon name="heart" size={24} />
+        </span>
+        <div>
+          <p className="donation__label">{f.donation.label}</p>
+          <p className="donation__text">
+            <Marked text={f.donation.text} cls="donation__em" />
+          </p>
+        </div>
+      </aside>
     </form>
     {confirming && <ConfirmDialog sending={sending} onYes={send} onNo={() => setConfirming(false)} />}
     </>
@@ -289,12 +302,12 @@ export function RegistrationForm({ id }: { id: string }) {
 }
 
 /** Resalta lo que va entre *asteriscos* como con marcador (en el cartel no sirve el degradé de los títulos). */
-function Marked({ text }: { text: string }) {
+function Marked({ text, cls = 'modal__em' }: { text: string; cls?: string }) {
   return (
     <>
       {text.split(/\*(.+?)\*/g).map((part, i) =>
         i % 2 === 1 ? (
-          <strong key={i} className="modal__em">
+          <strong key={i} className={cls}>
             {part}
           </strong>
         ) : (

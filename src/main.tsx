@@ -11,6 +11,10 @@ import '@fontsource/geist/latin-700.css'
 import '@fontsource/jetbrains-mono/latin-500.css'
 import '@fontsource/jetbrains-mono/latin-700.css'
 import './index.css'
+import { initPixel } from './pixel'
+
+// Píxel de Meta para medir los anuncios (solo en la página publicada). Ver src/pixel.ts.
+initPixel()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
