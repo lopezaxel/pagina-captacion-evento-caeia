@@ -1,4 +1,5 @@
 import { content } from './content'
+import { clarityEvent } from './clarity'
 
 // Píxel de Meta (Facebook e Instagram) para medir los anuncios del evento.
 // Es el mismo código que da Meta, pero cargado desde un archivo propio y no pegado en el HTML: la página tiene una política de
@@ -64,6 +65,7 @@ export function trackLead() {
  * nunca datos de la persona. En Meta aparecen como «eventos personalizados».
  */
 export function trackStep(name: string, params?: Record<string, string>) {
+  clarityEvent(name) // El mismo paso queda marcado en la grabación de Clarity.
   if (!enabled()) return
   window.fbq?.('trackCustom', name, params)
 }

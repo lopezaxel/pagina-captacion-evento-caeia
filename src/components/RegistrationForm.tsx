@@ -145,7 +145,7 @@ export function RegistrationForm({ id }: { id: string }) {
     const firstName = values.nombre.trim().split(/\s+/)[0]
     const s = f.success
     return (
-      <div className="glass glass--glow form form--done" id={id}>
+      <div className="glass glass--glow form form--done" id={id} data-clarity-mask="True">
         <span className="done__icon">
           <Icon name="check" size={28} />
         </span>
@@ -172,9 +172,11 @@ export function RegistrationForm({ id }: { id: string }) {
   const fid = (name: string) => `${id}-${name}`
   const sending = status === 'sending'
 
+  // OJO: el formulario y la pantalla de confirmación llevan data-clarity-mask="True" para que Microsoft Clarity no grabe
+  // lo que se escribe (ver src/clarity.ts). No sacarlo.
   return (
     <>
-    <form className="glass glass--glow form" id={id} onSubmit={onSubmit} noValidate ref={formRef}>
+    <form className="glass glass--glow form" id={id} onSubmit={onSubmit} noValidate ref={formRef} data-clarity-mask="True">
       <div className="form__head">
         <h3>{f.title}</h3>
         <p className="muted">{f.subtitle}</p>

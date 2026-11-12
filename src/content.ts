@@ -32,8 +32,11 @@ export const content = {
   // Píxel de Meta (Facebook e Instagram) para los anuncios. El ID es público (va en el código de la página), no es un secreto.
   // Creado por Axel el 2026-11-11 en Meta Events Manager (conjunto de datos «Evento CAEIA 18-11»). Para apagarlo: dejar vacío.
   // Eventos: PageView (al abrir la página) y Lead (cuando la inscripción se guarda). Ver src/pixel.ts.
+  // Microsoft Clarity (grabaciones de visitas y mapas de calor), proyecto creado por Axel el 2026-11-12. ID público. Vacío = apagado.
+  // Sin aviso de cookies (recomendación de Niki, a validar con un abogado junto con el píxel de Meta). El formulario va enmascarado.
   analytics: {
     metaPixelId: '1134377065911958',
+    clarityId: 'zcl6jatcuf',
   },
 
   // Cronómetro fijo arriba. Cuenta hasta event.dateISO + event.startTime; se oculta cuando termina el evento.
@@ -365,7 +368,7 @@ export const content = {
   privacy: {
     id: 'privacidad',
     title: 'Aviso de privacidad',
-    text: 'Usamos tus datos solo para organizar el evento y mantenerte al tanto de lo que pase antes y después. No los vendemos ni los cedemos a otras empresas. Para medir los anuncios usamos el píxel de Meta, que recibe datos de navegación, no tu nombre ni tus datos de contacto.',
+    text: 'Usamos tus datos solo para organizar el evento y mantenerte al tanto de lo que pase antes y después. No los vendemos ni los cedemos a otras empresas. Para medir los anuncios usamos el píxel de Meta, y para ver cómo se usa la página (clics, movimiento del cursor y scroll, sin lo que escribís en el formulario) usamos Microsoft Clarity. Ninguna de las dos recibe tu nombre ni tus datos de contacto.',
     legend:
       'El titular de los datos personales tiene la facultad de ejercer el derecho de acceso a los mismos en forma gratuita a intervalos no inferiores a seis meses, salvo que se acredite un interés legítimo al efecto conforme lo establecido en el artículo 14, inciso 3 de la Ley Nº 25.326. La Agencia de Acceso a la Información Pública, en su carácter de Órgano de Control de la Ley Nº 25.326, tiene la atribución de atender las denuncias y reclamos que interpongan quienes resulten afectados en sus derechos por incumplimiento de las normas vigentes en materia de protección de datos personales.',
   },
@@ -376,7 +379,7 @@ export const content = {
   // Contacto del responsable cargado por Axel el 2026-11-06 (`responsible.email` y `responsible.whatsapp`); si se vacían, las
   // páginas muestran «[completar contacto]».
   legal: {
-    updated: '11 de noviembre de 2026',
+    updated: '12 de noviembre de 2026',
     backToEvent: 'Volver a la página del evento',
     otherDocs: { privacy: 'Política de privacidad', terms: 'Términos y condiciones' },
     responsible: {
@@ -424,13 +427,14 @@ export const content = {
             'Sumarte al grupo de WhatsApp del evento, donde avisamos todo lo del evento. Entrás vos, desde el botón de la pantalla de confirmación.',
             'Hacer estadísticas internas (cuántas personas se anotaron y de qué tipo).',
             'Medir el resultado de los anuncios del evento con el píxel de Meta (por ejemplo, cuántas personas visitaron la página y cuántas se inscribieron) y mostrar los anuncios a quienes la visitaron. Para eso no usamos tu nombre, tu WhatsApp ni tu mail.',
+            'Ver cómo se usa la página para mejorarla, con Microsoft Clarity: se registran tus clics, el movimiento del cursor, el scroll y las páginas que visitás, y se pueden ver como una grabación de la visita. Lo que escribís en el formulario no se graba: está oculto.',
           ],
           p: ['No los usamos para otra cosa ni los vendemos. Tu consentimiento es libre y podés retirarlo cuando quieras.'],
         },
         {
           h: 'Con quién los compartimos',
           p: [
-            'Para que la página funcione usamos proveedores técnicos que guardan o procesan los datos por nuestra cuenta: Supabase (base de datos), Vercel (alojamiento de la página), Google (mapa que se muestra en la página), Meta (píxel de medición de anuncios y WhatsApp, para los mensajes y el grupo del evento) y un servicio de correo electrónico (avisos y, cuando los enviemos, recordatorios por mail).',
+            'Para que la página funcione usamos proveedores técnicos que guardan o procesan los datos por nuestra cuenta: Supabase (base de datos), Vercel (alojamiento de la página), Google (mapa que se muestra en la página), Meta (píxel de medición de anuncios y WhatsApp, para los mensajes y el grupo del evento), Microsoft (Clarity, para ver cómo se usa la página) y un servicio de correo electrónico (avisos y, cuando los enviemos, recordatorios por mail).',
             'No cedemos tus datos a otras empresas ni personas, salvo que una autoridad competente lo exija.',
           ],
         },
@@ -444,6 +448,7 @@ export const content = {
           h: 'Cookies',
           p: [
             'Esta página no usa cookies propias. Para contar las visitas (cuántas personas entran, desde qué país y dispositivo, y de qué enlace llegan) usamos Vercel Web Analytics, que no usa cookies ni guarda datos personales. Sí usa el píxel de Meta (Facebook e Instagram) para medir los anuncios del evento: Meta puede guardar cookies e identificadores en tu navegador y recibir datos como tu dirección IP, el navegador que usás, las páginas que visitás y que completaste la inscripción. No le enviamos tu nombre, tu WhatsApp ni tu mail. Para limitarlo podés cambiar tus preferencias de anuncios en tu cuenta de Facebook o Instagram, o usar un bloqueador de rastreadores en tu navegador.',
+            'También usa Microsoft Clarity, que guarda un identificador en tu navegador (cookies) para seguir tu visita como una sola sesión. Podés evitarlo con un bloqueador de rastreadores.',
             'El mapa de «Dónde es» lo muestra Google, y Google puede usar cookies al cargarlo, según su propia política.',
           ],
         },
