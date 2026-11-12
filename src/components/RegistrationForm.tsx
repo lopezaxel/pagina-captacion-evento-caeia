@@ -4,7 +4,7 @@ import { content } from '../content'
 import { dateLabel, fill } from '../lib'
 import { InlineCountdown } from './CountdownBar'
 import { Icon } from './ui'
-import { trackLead } from '../pixel'
+import { trackLead, trackStep } from '../pixel'
 
 /** Bandera de Argentina simplificada (los emojis de banderas no se ven en Windows). */
 function FlagAR() {
@@ -76,6 +76,7 @@ export function RegistrationForm({ id }: { id: string }) {
     setErrors(found)
     setSendError('')
     if (Object.keys(found).length > 0) return
+    trackStep('CartelAtencion') // Llegó al cartel «¡Atención!» (datos completos), todavía sin confirmar.
     setConfirming(true)
   }
 
@@ -296,7 +297,7 @@ export function RegistrationForm({ id }: { id: string }) {
         </div>
       </aside>
     </form>
-    {confirming && <ConfirmDialog sending={sending} onYes={send} onNo={() => setConfirming(false)} />}
+    {confirming && <ConfirmDialog sending={sending} onYes={send} onNo={() => { trackStep('CartelNoIre'); setConfirming(false) }} />}
     </>
   )
 }

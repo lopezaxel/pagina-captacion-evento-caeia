@@ -443,7 +443,7 @@ export const content = {
         {
           h: 'Cookies',
           p: [
-            'Esta página no usa cookies propias. Sí usa el píxel de Meta (Facebook e Instagram) para medir los anuncios del evento: Meta puede guardar cookies e identificadores en tu navegador y recibir datos como tu dirección IP, el navegador que usás, las páginas que visitás y que completaste la inscripción. No le enviamos tu nombre, tu WhatsApp ni tu mail. Para limitarlo podés cambiar tus preferencias de anuncios en tu cuenta de Facebook o Instagram, o usar un bloqueador de rastreadores en tu navegador.',
+            'Esta página no usa cookies propias. Para contar las visitas (cuántas personas entran, desde qué país y dispositivo, y de qué enlace llegan) usamos Vercel Web Analytics, que no usa cookies ni guarda datos personales. Sí usa el píxel de Meta (Facebook e Instagram) para medir los anuncios del evento: Meta puede guardar cookies e identificadores en tu navegador y recibir datos como tu dirección IP, el navegador que usás, las páginas que visitás y que completaste la inscripción. No le enviamos tu nombre, tu WhatsApp ni tu mail. Para limitarlo podés cambiar tus preferencias de anuncios en tu cuenta de Facebook o Instagram, o usar un bloqueador de rastreadores en tu navegador.',
             'El mapa de «Dónde es» lo muestra Google, y Google puede usar cookies al cargarlo, según su propia política.',
           ],
         },

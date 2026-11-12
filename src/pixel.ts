@@ -58,3 +58,61 @@ export function trackLead() {
   if (!enabled()) return
   window.fbq?.('track', 'Lead')
 }
+
+/**
+ * Evento propio del embudo (por ejemplo «ClicQuieroMiLugar»). Solo lleva el nombre y, a lo sumo, de qué botón vino:
+ * nunca datos de la persona. En Meta aparecen como «eventos personalizados».
+ */
+export function trackStep(name: string, params?: Record<string, string>) {
+  if (!enabled()) return
+  window.fbq?.('trackCustom', name, params)
+}
+
+/**
+ * Mide el recorrido dentro de la página para ver dónde se cae la gente:
+ *   VerFormulario       → el formulario entró en pantalla (una vez por visita)
+ *   ClicQuieroMiLugar   → tocó cualquier botón que lleva al formulario (con `lugar`: cronometro, hero, boton_fijo o seccion)
+ *   EmpezoFormulario    → tocó el primer campo (una vez por visita)
+ * Los otros dos pasos («CartelAtencion» y «CartelNoIre») se mandan desde RegistrationForm.tsx.
+ * Se engancha al documento (no a cada botón), así que sirve aunque cambien los botones o el copy.
+ */
+export function initFunnelTracking() {
+  if (!enabled()) return
+
+  document.addEventListener('click', (ev) => {
+    const link = (ev.target as Element | null)?.closest?.('a[href="#inscripcion"]')
+    if (!link) return
+    const lugar = link.closest('.countdown')
+      ? 'cronometro'
+      : link.closest('.sticky')
+        ? 'boton_fijo'
+        : link.closest('.hero')
+          ? 'hero'
+          : 'seccion'
+    trackStep('ClicQuieroMiLugar', { lugar })
+  })
+
+  let started = false
+  document.addEventListener('focusin', (ev) => {
+    const el = ev.target as HTMLElement | null
+    // El campo «website» es la trampa anti-bots: no cuenta.
+    if (started || !el?.closest?.('form.form') || (el as HTMLInputElement).name === 'website') return
+    started = true
+    trackStep('EmpezoFormulario')
+  })
+
+  // El formulario se dibuja después de cargar el script, así que se lo busca cuando termina de cargar la página.
+  window.addEventListener('load', () => {
+    const section = document.getElementById('inscripcion')
+    if (!section || !('IntersectionObserver' in window)) return
+    const seen = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return
+        seen.disconnect()
+        trackStep('VerFormulario')
+      },
+      { threshold: 0.25 },
+    )
+    seen.observe(section)
+  })
+}
