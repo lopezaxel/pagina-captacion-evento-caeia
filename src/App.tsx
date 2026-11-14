@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { eventJsonLd } from './lib'
-import { Agenda, Closing, Facts, Faq, Footer, ForYou, Hero, Organizers, Problem, Signup, Venue, WhatYouSee } from './components/Sections'
+import { Agenda, Closing, Facts, Faq, Footer, ForYou, Hero, Organizers, Problem, Signup, SignupTop, Venue, WhatYouSee } from './components/Sections'
 import { StickyCta } from './components/StickyCta'
 import { CountdownBar } from './components/CountdownBar'
 import { LegalPage } from './components/Legal'
@@ -22,7 +22,9 @@ function useInView(id: string, threshold: number) {
 function Landing() {
   // El botón fijo de abajo (celular) se oculta cuando ya hay otro botón o el formulario a la vista.
   const heroCtaInView = useInView('hero-cta', 0.6)
-  const signupInView = useInView('inscripcion', 0.2)
+  // Hay dos formularios (arriba y al final): el botón fijo se oculta cuando cualquiera de los dos está a la vista.
+  const signupTopInView = useInView('inscripcion', 0.2)
+  const signupEndInView = useInView('inscripcion-final', 0.2)
 
   return (
     <>
@@ -32,6 +34,7 @@ function Landing() {
       <Hero />
       <main>
         <Facts />
+        <SignupTop />
         <ForYou />
         <Problem />
         <WhatYouSee />
@@ -43,7 +46,7 @@ function Landing() {
         <Signup />
       </main>
       <Footer />
-      <StickyCta visible={!heroCtaInView && !signupInView} />
+      <StickyCta visible={!heroCtaInView && !signupTopInView && !signupEndInView} />
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd(window.location.origin)) }} />
     </>

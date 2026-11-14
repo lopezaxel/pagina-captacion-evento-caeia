@@ -86,7 +86,7 @@ export const content = {
   },
 
   // Bloque "¿Es para vos?": hace que todos los anuncios (comerciantes, emprendedoras, general) aterricen en la misma página
-  // y cada persona se vea nombrada. Las etiquetas del primer grupo coinciden con las opciones de "Soy…" del formulario.
+  // y cada persona se vea nombrada.
   // PENDIENTE: Axel todavía no decidió si se suma "Contador/a" a las etiquetas.
   forYou: {
     kicker: 'Para quién es',
@@ -294,8 +294,10 @@ export const content = {
     kicker: 'Inscripción',
     // Título grande de la sección (arriba de la tarjeta del formulario).
     sectionTitle: 'Tu lugar *te espera*',
+    // Etiqueta destacada arriba del título de la tarjeta (el formulario se repite: arriba, antes de «Para quién es», y al final).
+    badge: 'Gratis · Cupos limitados',
     title: 'Anotate y reservá tu lugar',
-    subtitle: 'Es gratis. Te pedimos solo lo necesario.',
+    subtitle: 'Completá 3 datos y entrás al grupo de WhatsApp del evento.',
     // El mail es obligatorio (pedido de Axel, 2026-11-03: servirá para los recordatorios por mail).
     // Para volver a hacerlo opcional: poner false y cambiar en `consent` "y por mail" por "(y por mail, si lo completé)".
     emailRequired: true,
@@ -311,7 +313,6 @@ export const content = {
     labels: {
       nombre: 'Nombre y apellido',
       whatsapp: 'WhatsApp',
-      tipo: 'Soy…',
       email: 'Mail',
       emailOptional: 'Mail (opcional)',
     },
@@ -320,11 +321,9 @@ export const content = {
       whatsapp: '387 1234567',
       email: 'tu@mail.com',
     },
-    hints: { whatsapp: 'Con código de área, sin 0 ni 15. Ej.: 387 1234567' },
-    // "Soy…": 5 tipos de persona (decisión de Axel, 2026-11-06), por prioridad de público. Antes mezclaba rol y condición
-    // fiscal. «Emprendedor» incluye a quien está por arrancar. Si se cambian, hay que cambiar también la lista TIPOS de la
-    // función inscripcion-evento y la regla inscripciones_tipo_check de la tabla (si no, esos envíos se rechazan).
-    tipos: ['Dueño de negocio', 'Emprendedor (o por arrancar)', 'Empleado/a o encargado/a', 'Contador/a', 'Otro'],
+    hints: { whatsapp: 'Con código de área. Ej.: 387 1234567' },
+    // El campo «Soy…» (dueño de negocio, emprendedor, etc.) se SACÓ el 2026-11-14 por pedido de Axel, para pedir menos datos.
+    // La columna `tipo` sigue en la tabla `evento_caeia.inscripciones` (ahora opcional, con los valores de las 2 primeras filas).
     // Texto provisorio: Axel decidió publicar con este texto (2026-11-06); idealmente lo valida la contadora o un abogado
     // (Ley 25.326). Se guarda tal cual en cada inscripción. Por pedido de Axel ya no menciona que el evento se filma.
     consent:
@@ -335,8 +334,7 @@ export const content = {
     sending: 'Reservando…',
     errors: {
       nombre: 'Escribí tu nombre.',
-      whatsapp: 'Escribí tu WhatsApp con código de área, sin 0 ni 15 (ej.: 387 1234567).',
-      tipo: 'Elegí una opción.',
+      whatsapp: 'Escribí tu WhatsApp con código de área (ej.: 387 1234567).',
       email: 'Revisá el mail: parece que le falta algo.',
       emailRequired: 'Escribí tu mail.',
       consent: 'Necesitamos tu consentimiento para anotarte.',
@@ -344,18 +342,12 @@ export const content = {
       send: 'No pudimos guardar tu inscripción. Probá de nuevo en un momento.',
       tooMany: 'Hiciste muchos intentos seguidos. Esperá unos minutos y probá de nuevo.',
     },
-    // Cartel que sale al tocar «Quiero mi lugar» (con los datos ya completos), por encima de todo el formulario (pedido de
-    // Axel, 2026-11-09). «Sí voy a asistir» envía la inscripción; «OK, no iré» cierra el cartel y no guarda nada.
-    // Lo que va entre *asteriscos* se resalta.
-    confirm: {
-      title: '¡Atención!',
-      text: 'Registrate solo si *REALMENTE* vas a asistir, ya que es un seminario *MUY EXCLUSIVO* y con capacidad *LIMITADA*.',
-      yes: 'SÍ VOY A ASISTIR',
-      no: 'OK, no iré',
-      sending: 'Reservando…',
-    },
-    // Pantalla después de confirmar: solo el botón del grupo de WhatsApp (se sacaron «Agregar al calendario» y la encuesta).
+    // El cartel «¡Atención! Registrate solo si REALMENTE vas a asistir» (2026-11-09) se SACÓ el 2026-11-14 por pedido de Axel:
+    // ahora «Quiero mi lugar» envía la inscripción directo y sale la pantalla del grupo de WhatsApp.
+    // Pantalla después de anotarse: solo el botón del grupo de WhatsApp, grande y llamativo (se sacaron «Agregar al calendario»
+    // y la encuesta).
     success: {
+      lastStep: 'Último paso',
       title: 'Listo, {nombre}. Tu lugar está reservado.',
       text: 'Te esperamos el {fecha}, {hora} hs, en {lugar}.',
       mustJoin: 'Tenés que entrar al grupo de WhatsApp sí o sí: ahí te avisamos todo lo del evento.',
@@ -409,7 +401,6 @@ export const content = {
             'Nombre y apellido.',
             'Número de WhatsApp.',
             'Mail.',
-            'El tipo de persona que elegiste en «Soy…» (por ejemplo, dueño de negocio o emprendedor).',
             'El origen del link por el que llegaste (por ejemplo, Instagram), cuando viene en la dirección.',
             'La fecha y hora de tu inscripción y el texto del consentimiento que aceptaste.',
           ],
@@ -425,7 +416,7 @@ export const content = {
             'Avisarte por WhatsApp y por mail sobre el evento: recordatorios y cambios.',
             'Contarte las novedades del lanzamiento de CAEIA, porque lo aceptaste al inscribirte.',
             'Sumarte al grupo de WhatsApp del evento, donde avisamos todo lo del evento. Entrás vos, desde el botón de la pantalla de confirmación.',
-            'Hacer estadísticas internas (cuántas personas se anotaron y de qué tipo).',
+            'Hacer estadísticas internas (cuántas personas se anotaron y por qué canal llegaron).',
             'Medir el resultado de los anuncios del evento con el píxel de Meta (por ejemplo, cuántas personas visitaron la página y cuántas se inscribieron) y mostrar los anuncios a quienes la visitaron. Para eso no usamos tu nombre, tu WhatsApp ni tu mail.',
             'Ver cómo se usa la página para mejorarla, con Microsoft Clarity: se registran tus clics, el movimiento del cursor, el scroll y las páginas que visitás, y se pueden ver como una grabación de la visita. Lo que escribís en el formulario no se graba: está oculto.',
           ],

@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
-import { createPortal } from 'react-dom'
+import { useMemo, useRef, useState, type FormEvent } from 'react'
 import { content } from '../content'
 import { dateLabel, fill } from '../lib'
 import { InlineCountdown } from './CountdownBar'
 import { Icon } from './ui'
 import { trackLead, trackStep } from '../pixel'
+import { markRegistered, useRegistered } from '../registration'
 
 /** Bandera de Argentina simplificada (los emojis de banderas no se ven en Windows). */
 function FlagAR() {
@@ -18,25 +18,36 @@ function FlagAR() {
   )
 }
 
-/** Deja solo el número nacional de 10 dígitos (código de área + número): saca 54, 0 y el 9 de WhatsApp. */
+/**
+ * Deja solo el número nacional de 10 dígitos (código de área + número): saca 54, 0, el 9 de WhatsApp y el «15».
+ * El «15» es como se escribe el celular en Argentina («387 15 4123456», «0387 15-4123456»): si sobran dígitos y hay un 15 justo
+ * después del código de área (3 dígitos como Salta, 4 como Tartagal o 2 como Buenos Aires), se saca en vez de rechazar el número.
+ */
 function nationalNumber(raw: string): string {
   let d = raw.replace(/\D/g, '')
   if (d.startsWith('54') && d.length > 10) d = d.slice(2)
   if (d.startsWith('0')) d = d.slice(1)
   if (d.startsWith('9') && d.length === 11) d = d.slice(1)
+  if (d.length === 12) {
+    for (const area of [3, 4, 2]) {
+      if (d.startsWith('15', area)) {
+        d = d.slice(0, area) + d.slice(area + 2)
+        break
+      }
+    }
+  }
   return d
 }
 
 type Values = {
   nombre: string
   whatsapp: string
-  tipo: string
   consent: boolean
   email: string
 }
-type Errors = Partial<Record<'nombre' | 'whatsapp' | 'tipo' | 'email' | 'consent', string>>
+type Errors = Partial<Record<'nombre' | 'whatsapp' | 'email' | 'consent', string>>
 
-const EMPTY: Values = { nombre: '', whatsapp: '', tipo: '', consent: false, email: '' }
+const EMPTY: Values = { nombre: '', whatsapp: '', consent: false, email: '' }
 const f = content.form
 const e = content.event
 
@@ -44,7 +55,6 @@ function validate(v: Values): Errors {
   const errors: Errors = {}
   if (v.nombre.trim().length < 2) errors.nombre = f.errors.nombre
   if (nationalNumber(v.whatsapp).length !== 10) errors.whatsapp = f.errors.whatsapp
-  if (!v.tipo) errors.tipo = f.errors.tipo
   if (!v.email.trim()) {
     if (f.emailRequired) errors.email = f.errors.emailRequired
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email.trim())) {
@@ -54,13 +64,30 @@ function validate(v: Values): Errors {
   return errors
 }
 
+/** Resalta lo que va entre *asteriscos* como con marcador. */
+function Marked({ text, cls }: { text: string; cls: string }) {
+  return (
+    <>
+      {text.split(/\*(.+?)\*/g).map((part, i) =>
+        i % 2 === 1 ? (
+          <strong key={i} className={cls}>
+            {part}
+          </strong>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  )
+}
+
 export function RegistrationForm({ id }: { id: string }) {
   const [values, setValues] = useState<Values>(EMPTY)
   const [errors, setErrors] = useState<Errors>({})
-  const [status, setStatus] = useState<'idle' | 'sending' | 'done'>('idle')
+  const [status, setStatus] = useState<'idle' | 'sending'>('idle')
   const [sendError, setSendError] = useState('')
-  // Cartel «¡Atención!» que se muestra antes de enviar: solo se envía si la persona confirma que va a asistir.
-  const [confirming, setConfirming] = useState(false)
+  // Si la persona ya se anotó (en este formulario o en el otro de la página), se muestra el botón del grupo de WhatsApp.
+  const registered = useRegistered()
   const formRef = useRef<HTMLFormElement>(null)
   const origin = useMemo(() => new URLSearchParams(window.location.search).get('o') ?? '', [])
 
@@ -69,15 +96,16 @@ export function RegistrationForm({ id }: { id: string }) {
     if (key in errors) setErrors((prev) => ({ ...prev, [key]: undefined }))
   }
 
-  // Al tocar «Quiero mi lugar» solo se valida: el envío real pasa cuando confirman en el cartel.
+  // Al tocar «Quiero mi lugar» con los datos completos la inscripción se envía directo (desde el 2026-11-14 ya no hay cartel
+  // de confirmación) y sale la pantalla del grupo de WhatsApp.
   function onSubmit(ev: FormEvent<HTMLFormElement>) {
     ev.preventDefault()
     const found = validate(values)
     setErrors(found)
     setSendError('')
     if (Object.keys(found).length > 0) return
-    trackStep('CartelAtencion') // Llegó al cartel «¡Atención!» (datos completos), todavía sin confirmar.
-    setConfirming(true)
+    trackStep('EnvioFormulario') // Datos completos y válidos: se intenta guardar la inscripción.
+    void send()
   }
 
   async function send() {
@@ -98,12 +126,11 @@ export function RegistrationForm({ id }: { id: string }) {
           origen: origin || null,
         })
         window.setTimeout(() => {
-          setConfirming(false)
-          setStatus('done')
+          setStatus('idle')
+          markRegistered(values.nombre.trim())
         }, 700)
       } else {
         setSendError(f.errors.send)
-        setConfirming(false)
         setStatus('idle')
       }
       return
@@ -118,7 +145,6 @@ export function RegistrationForm({ id }: { id: string }) {
           // Se guarda como +54 + 10 dígitos. Ojo: los links wa.me de Argentina llevan 549 + número.
           whatsapp: `+54${nationalNumber(values.whatsapp)}`,
           email: values.email,
-          tipo: values.tipo,
           origen: origin,
           consentimiento: values.consent,
           // Se guarda el texto exacto que la persona aceptó.
@@ -128,43 +154,43 @@ export function RegistrationForm({ id }: { id: string }) {
       })
       if (res.ok) {
         trackLead() // Le avisa a Meta que alguien se inscribió (sin datos personales), para medir los anuncios.
-        setConfirming(false)
-        setStatus('done')
+        setStatus('idle')
+        markRegistered(values.nombre.trim())
         return
       }
       setSendError(res.status === 429 ? f.errors.tooMany : f.errors.send)
     } catch {
       setSendError(f.errors.send)
     }
-    // Si falló, se cierra el cartel para que el error se vea sobre el botón del formulario.
-    setConfirming(false)
     setStatus('idle')
   }
 
-  if (status === 'done') {
-    const firstName = values.nombre.trim().split(/\s+/)[0]
+  if (registered) {
+    const firstName = registered.nombre.split(/\s+/)[0]
     const s = f.success
     return (
-      <div className="glass glass--glow form form--done" id={id} data-clarity-mask="True">
+      <div className="glass glass--glow form form--hot form--done" id={id} data-clarity-mask="True">
         <span className="done__icon">
           <Icon name="check" size={28} />
         </span>
+        <p className="done__step">{s.lastStep}</p>
         <h3>{fill(s.title, { nombre: firstName })}</h3>
-        <p className="muted">{fill(s.text, { fecha: dateLabel, lugar: e.venueShort })}</p>
         <p className="done__must">{s.mustJoin}</p>
-        <div className="done__actions">
-          {e.whatsappGroupUrl ? (
-            <a className="btn btn--lg" href={e.whatsappGroupUrl} target="_blank" rel="noreferrer">
-              <Icon name="message" size={22} />
-              {s.whatsapp}
-            </a>
-          ) : (
-            import.meta.env.DEV && (
-              <span className="dev-note">[solo en desarrollo] Falta el link del grupo de WhatsApp en content.ts</span>
-            )
-          )}
-        </div>
+        {e.whatsappGroupUrl ? (
+          <a className="done__wa" href={e.whatsappGroupUrl} target="_blank" rel="noreferrer">
+            <span className="done__wa-icon">
+              <Icon name="message" size={30} />
+            </span>
+            <span className="done__wa-text">{s.whatsapp}</span>
+            <span className="done__wa-arrow">
+              <Icon name="arrow" size={26} />
+            </span>
+          </a>
+        ) : (
+          import.meta.env.DEV && <span className="dev-note">[solo en desarrollo] Falta el link del grupo de WhatsApp en content.ts</span>
+        )}
         {(e.whatsappGroupUrl || import.meta.env.DEV) && <p className="tiny">{s.whatsappNote}</p>}
+        <p className="muted done__when">{fill(s.text, { fecha: dateLabel, lugar: e.venueShort })}</p>
       </div>
     )
   }
@@ -175,9 +201,9 @@ export function RegistrationForm({ id }: { id: string }) {
   // OJO: el formulario y la pantalla de confirmación llevan data-clarity-mask="True" para que Microsoft Clarity no grabe
   // lo que se escribe (ver src/clarity.ts). No sacarlo.
   return (
-    <>
-    <form className="glass glass--glow form" id={id} onSubmit={onSubmit} noValidate ref={formRef} data-clarity-mask="True">
+    <form className="glass glass--glow form form--hot" id={id} onSubmit={onSubmit} noValidate ref={formRef} data-clarity-mask="True">
       <div className="form__head">
+        <p className="form__badge">{f.badge}</p>
         <h3>{f.title}</h3>
         <p className="muted">{f.subtitle}</p>
       </div>
@@ -242,17 +268,6 @@ export function RegistrationForm({ id }: { id: string }) {
       </div>
 
       <div className="field">
-        <label htmlFor={fid('tipo')}>{f.labels.tipo}</label>
-        <select id={fid('tipo')} value={values.tipo} onChange={(ev) => set('tipo', ev.target.value)} aria-invalid={!!errors.tipo}>
-          <option value="">Elegí una opción</option>
-          {f.tipos.map((t) => (
-            <option key={t}>{t}</option>
-          ))}
-        </select>
-        {errors.tipo && <span className="error">{errors.tipo}</span>}
-      </div>
-
-      <div className="field">
         <label className="check" htmlFor={fid('consent')}>
           <input id={fid('consent')} type="checkbox" checked={values.consent} onChange={(ev) => set('consent', ev.target.checked)} aria-invalid={!!errors.consent} />
           <span>
@@ -281,9 +296,9 @@ export function RegistrationForm({ id }: { id: string }) {
         </p>
       )}
 
-      <button className="btn btn--block" type="submit" disabled={sending}>
+      <button className="btn btn--block btn--submit" type="submit" disabled={sending}>
         {sending ? f.sending : f.submit}
-        {!sending && <Icon name="arrow" size={20} />}
+        {!sending && <Icon name="arrow" size={22} />}
       </button>
       <InlineCountdown />
       <p className="reassure">{f.reassurance}</p>
@@ -299,78 +314,5 @@ export function RegistrationForm({ id }: { id: string }) {
         </div>
       </aside>
     </form>
-    {confirming && <ConfirmDialog sending={sending} onYes={send} onNo={() => { trackStep('CartelNoIre'); setConfirming(false) }} />}
-    </>
-  )
-}
-
-/** Resalta lo que va entre *asteriscos* como con marcador (en el cartel no sirve el degradé de los títulos). */
-function Marked({ text, cls = 'modal__em' }: { text: string; cls?: string }) {
-  return (
-    <>
-      {text.split(/\*(.+?)\*/g).map((part, i) =>
-        i % 2 === 1 ? (
-          <strong key={i} className={cls}>
-            {part}
-          </strong>
-        ) : (
-          part
-        ),
-      )}
-    </>
-  )
-}
-
-/** Cartel «¡Atención!» por encima de todo el formulario: «SÍ VOY A ASISTIR» envía la inscripción, «OK, no iré» la cancela. */
-function ConfirmDialog({ sending, onYes, onNo }: { sending: boolean; onYes: () => void; onNo: () => void }) {
-  const c = f.confirm
-  const box = useRef<HTMLDivElement>(null)
-  // Se guardan en refs para que el efecto de abajo corra una sola vez (si no, cada render volvería a mover el foco).
-  const sendingRef = useRef(sending)
-  const onNoRef = useRef(onNo)
-  sendingRef.current = sending
-  onNoRef.current = onNo
-
-  useEffect(() => {
-    // El foco va al cartel (no a un botón), para que un Enter o un espacio de más no confirme sin querer.
-    box.current?.focus()
-    const prevOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    const onKey = (ev: KeyboardEvent) => {
-      if (ev.key === 'Escape' && !sendingRef.current) onNoRef.current()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => {
-      window.removeEventListener('keydown', onKey)
-      document.body.style.overflow = prevOverflow
-    }
-  }, [])
-
-  return createPortal(
-    <div
-      className="modal"
-      onMouseDown={(ev) => {
-        if (ev.target === ev.currentTarget && !sending) onNo()
-      }}
-    >
-      <div className="modal__box" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-text" tabIndex={-1} ref={box}>
-        <span className="modal__icon">
-          <Icon name="alert" size={32} />
-        </span>
-        <h3 id="confirm-title">{c.title}</h3>
-        <p id="confirm-text" className="modal__text">
-          <Marked text={c.text} />
-        </p>
-        <div className="modal__actions">
-          <button type="button" className="btn btn--lg" onClick={onYes} disabled={sending}>
-            {sending ? c.sending : c.yes}
-          </button>
-          <button type="button" className="btn btn--ghost" onClick={onNo} disabled={sending}>
-            {c.no}
-          </button>
-        </div>
-      </div>
-    </div>,
-    document.body,
   )
 }

@@ -380,15 +380,33 @@ export function Faq() {
   )
 }
 
+/**
+ * Formulario de arriba, justo después de los datos de la noche y antes de «Para quién es» (pedido de Axel, 2026-11-14: tenerlo
+ * lo más cerca posible de la persona). Es el destino de todos los botones «Quiero mi lugar» (`#inscripcion`).
+ * Ojo: desde esa fecha el formulario está DOS veces en la página (esta y la del final); las dos comparten el estado de «ya se anotó».
+ */
+export function SignupTop() {
+  return (
+    <section className="section section--signup-top" id="inscripcion">
+      <div className="container container--narrow">
+        <Reveal>
+          <RegistrationForm id="inscripcion-form" />
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+/** Formulario del final de la página, para quien llega hasta acá leyendo todo. */
 export function Signup() {
   return (
-    <section className="section section--signup section--light" id="inscripcion">
+    <section className="section section--signup section--light" id="inscripcion-final">
       <div className="container container--narrow">
         <Reveal>
           <Heading kicker={content.form.kicker} title={content.form.sectionTitle} />
         </Reveal>
         <Reveal>
-          <RegistrationForm id="inscripcion-form" />
+          <RegistrationForm id="inscripcion-form-final" />
         </Reveal>
       </div>
     </section>

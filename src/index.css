@@ -790,111 +790,240 @@ select option {
   color: var(--blue-soft);
   box-shadow: 0 0 34px rgba(14, 165, 233, 0.45);
 }
-.done__actions {
-  display: grid;
-  gap: 10px;
-  width: 100%;
-  margin-top: 6px;
+/* Pantalla después de anotarse (2026-11-14, pedido de Axel): lo único que se ve es el botón GRANDE del grupo de WhatsApp.
+   Va en verde WhatsApp a propósito (se reconoce al instante) y con un aro que late; es el único paso que le queda a la persona. */
+.done__step {
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--blue-soft);
 }
-.done__actions .btn {
-  height: auto;
-  min-height: 54px;
-  padding: 10px 18px;
-  line-height: 1.2;
-  text-align: center;
-}
-/* Pantalla de confirmación: solo el botón del grupo de WhatsApp, con el aviso de que hay que entrar. */
 .done__must {
   max-width: 34ch;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 700;
   line-height: 1.3;
   color: var(--text);
 }
-.done__actions .btn--lg {
-  min-height: 62px;
-  font-size: 18px;
+.done__wa {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 92px;
+  margin-top: 6px;
+  padding: 18px 20px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #17b552 0%, #25d366 55%, #62f19a 100%);
+  color: #03200e;
+  font: 800 clamp(18px, 5vw, 26px) / 1.15 var(--font-display);
+  letter-spacing: -0.01em;
+  text-align: left;
+  text-decoration: none;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.6),
+    0 0 0 3px rgba(37, 211, 102, 0.4),
+    0 0 70px rgba(37, 211, 102, 0.7),
+    0 18px 40px rgba(0, 0, 0, 0.45);
+  transition: transform 0.2s ease;
+}
+.done__wa:hover {
+  transform: translateY(-3px) scale(1.01);
+}
+/* Aro que late (solo transform y opacity: no pesa en celulares flojos). */
+.done__wa::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 3px solid #25d366;
+  pointer-events: none;
+  animation: wa-ring 1.8s ease-out infinite;
+}
+@keyframes wa-ring {
+  0% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.14, 1.32);
+  }
+}
+.done__wa-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #fff;
+  color: #128c4a;
+  box-shadow: 0 4px 14px rgba(3, 32, 14, 0.35);
+}
+.done__wa-text {
+  flex: 1;
+  text-align: center;
+}
+.done__wa-arrow {
+  display: grid;
+  flex: none;
+}
+@media (max-width: 479px) {
+  .done__wa {
+    gap: 12px;
+    padding: 16px 14px;
+  }
+  .done__wa-icon {
+    width: 48px;
+    height: 48px;
+  }
+  .done__wa-arrow {
+    display: none;
+  }
+}
+.done__when {
+  font-size: 14.5px;
+}
+/* Botón fijo de celular cuando la persona ya se anotó: mismo verde, para que siga empujando a entrar al grupo. */
+.btn--wa {
+  background: linear-gradient(135deg, #17b552 0%, #25d366 60%, #62f19a 100%);
+  color: #03200e;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 0 0 1px rgba(37, 211, 102, 0.5),
+    0 10px 34px rgba(37, 211, 102, 0.55);
 }
 
-/* Cartel «¡Atención!» (antes de enviar la inscripción): por encima de todo, con el resto de la página oscurecida. */
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-  overflow-y: auto;
-  background: rgba(4, 6, 18, 0.82);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  animation: modal-fade 0.2s ease both;
-}
-.modal__box {
-  width: min(100%, 480px);
-  padding: 32px 24px 26px;
-  border-radius: 26px;
-  text-align: center;
+/* ---------- Formulario llamativo (2026-11-14, pedido de Axel: que destaque más) ----------
+   Mismo lenguaje que la tarjeta del cierre: violeta profundo con luz arriba, borde luminoso azul/violeta que gira (solo en
+   escritorio: en celular queda fijo para no gastar batería) y resplandor fuerte. Funciona igual en la sección oscura de arriba
+   y en la clara del final (por eso la especificidad alta: le gana a «.section--light .glass.form»). */
+.glass.form.form--hot {
+  padding: 26px 20px 22px;
+  gap: 16px;
   background:
-    radial-gradient(70% 50% at 50% 0%, rgba(139, 92, 246, 0.45), rgba(139, 92, 246, 0) 100%),
-    linear-gradient(160deg, #2a1d63 0%, #0d1230 100%);
-  border: 2px solid rgba(196, 181, 253, 0.85);
+    radial-gradient(90% 38% at 50% 0%, rgba(139, 92, 246, 0.5), rgba(139, 92, 246, 0) 100%),
+    radial-gradient(60% 30% at 100% 100%, rgba(14, 165, 233, 0.22), rgba(14, 165, 233, 0) 100%),
+    linear-gradient(160deg, #241a5e 0%, #0c1030 100%);
+  border-color: rgba(196, 181, 253, 0.85);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    0 0 0 6px rgba(139, 92, 246, 0.22),
-    0 0 90px rgba(139, 92, 246, 0.6),
-    0 30px 80px rgba(0, 0, 0, 0.6);
-  animation: modal-pop 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
-  outline: none;
+    0 0 0 1px rgba(139, 92, 246, 0.5),
+    0 0 90px rgba(139, 92, 246, 0.55),
+    0 0 55px rgba(14, 165, 233, 0.3),
+    0 30px 80px rgba(0, 0, 0, 0.5);
 }
-.modal__icon {
-  display: inline-grid;
-  place-items: center;
-  width: 68px;
-  height: 68px;
-  margin-bottom: 14px;
-  border-radius: 50%;
+.form--hot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  pointer-events: none;
+  background: conic-gradient(from var(--ang), #38bdf8, #8b5cf6, #c4b5fd, #8b5cf6, #38bdf8);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+@media (min-width: 900px) {
+  .form--hot::after {
+    animation: closing-spin 6s linear infinite;
+  }
+  .glass.form.form--hot {
+    padding: 34px 34px 28px;
+  }
+}
+.form__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: #fff;
   background: linear-gradient(135deg, var(--violet-deep), var(--violet));
-  border: 1px solid rgba(221, 214, 254, 0.8);
-  box-shadow: 0 0 40px rgba(139, 92, 246, 0.8);
+  border: 1px solid rgba(221, 214, 254, 0.7);
+  box-shadow: 0 0 26px rgba(139, 92, 246, 0.7);
 }
-.modal__box h3 {
-  font-family: var(--font-display);
-  font-size: clamp(32px, 9vw, 42px);
-  line-height: 1;
+.form__badge::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #7dd3fc;
+  box-shadow: 0 0 10px #7dd3fc;
+}
+.form--hot .form__head h3 {
+  font-size: clamp(27px, 7.4vw, 34px);
+  line-height: 1.05;
   letter-spacing: -0.03em;
-  text-transform: uppercase;
-  margin-bottom: 14px;
 }
-.modal__text {
-  font-size: clamp(18px, 4.8vw, 21px);
-  line-height: 1.4;
-  color: #e4e8f7;
+.form--hot .form__head p.muted {
+  font-size: 15.5px;
+  margin-top: 6px;
 }
-/* Palabras clave del cartel: con marcador violeta detrás para que salten a la vista. */
-.modal__em {
-  color: #fff;
-  font-weight: 800;
-  padding: 0 0.15em;
-  border-radius: 6px;
-  background: rgba(139, 92, 246, 0.75);
+/* Campos más grandes y con borde claro: se ven de lejos y son cómodos con el pulgar. */
+.form--hot input[type='text'],
+.form--hot input[type='tel'],
+.form--hot input[type='email'] {
+  min-height: 54px;
+  background: rgba(4, 7, 22, 0.7);
+  border-color: rgba(196, 181, 253, 0.35);
 }
-.modal__actions {
-  display: grid;
-  gap: 10px;
-  margin-top: 24px;
+.form--hot .phone__cc {
+  min-height: 54px;
 }
-@keyframes modal-fade {
-  from {
-    opacity: 0;
+.form--hot .field label:not(.check) {
+  font-size: 14px;
+  font-weight: 600;
+  color: #dbe1f5;
+}
+/* Botón de enviar: más alto y con un destello que cruza cada pocos segundos (solo transform: no pesa). */
+.btn--submit {
+  position: relative;
+  overflow: hidden;
+  height: 66px;
+  font-size: 20px;
+  background: linear-gradient(135deg, #5b21b6 0%, #8b5cf6 55%, #38bdf8 130%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 0 0 1px rgba(196, 181, 253, 0.5),
+    0 12px 44px rgba(139, 92, 246, 0.75);
+}
+.btn--submit::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -40%;
+  width: 30%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: translateX(0) skewX(-18deg);
+  animation: submit-shine 3.6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes submit-shine {
+  0%,
+  55% {
+    transform: translateX(0) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(520%) skewX(-18deg);
   }
 }
-@keyframes modal-pop {
-  from {
-    opacity: 0;
-    transform: translateY(14px) scale(0.94);
-  }
+/* Sección de arriba: pegada a los datos de la noche (la sección tight ya deja aire abajo). */
+.section--signup-top {
+  padding: 6px 0 52px;
 }
 .dev-note {
   font-size: 12px;
@@ -2023,6 +2152,32 @@ select option {
   }
 }
 
+/* ---------- Celular: menos trabajo para la GPU (2026-11-13) ----------
+   Lighthouse móvil dio 39/100: «Style & Layout» ocupaba ~4 s con 12 desenfoques (backdrop-filter) y las manchas de luz animadas.
+   Desde 900 px (escritorio, donde sobra potencia) todo sigue igual. En celular: el vidrio queda translúcido pero sin desenfocar
+   lo de atrás (el fondo ya es oscuro y suave), las barras fijas se vuelven casi opacas para que se lean igual sobre el contenido
+   que pasa por debajo, y las manchas de luz quedan quietas. El cartel «¡Atención!» conserva su desenfoque (aparece una sola vez). */
+@media (max-width: 899px) {
+  .glass,
+  .plate {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .countdown {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(104, 14, 22, 0.96);
+  }
+  .sticky {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(10, 14, 26, 0.96);
+  }
+  .blob {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -2030,13 +2185,18 @@ select option {
   .blob,
   .countdown__dot,
   .closing::after,
-  .modal,
-  .modal__box,
-
   .reveal {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+  /* Animaciones del formulario y del botón del grupo: quietas para quien pidió menos movimiento. */
+  .form--hot::after {
+    animation: none;
+  }
+  .btn--submit::after,
+  .done__wa::before {
+    display: none;
   }
   .sticky,
   .btn {

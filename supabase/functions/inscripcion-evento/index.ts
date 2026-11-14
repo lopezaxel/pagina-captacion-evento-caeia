@@ -14,14 +14,15 @@
 //   - EVENTO_MAIL_FROM     → (opcional) remitente. Por defecto «Evento CAEIA <evento@caeia.app>» (dominio ya verificado en Resend).
 //   Ojo: los secretos de Supabase son de TODO el proyecto (compartido con CAEIA, que ya usa RESEND_API_KEY para el onboarding),
 //   por eso estos llevan el prefijo EVENTO_: así no se pisa nada de CAEIA.
-//   El aviso lleva poco a propósito: nombre, tipo, origen y total. No lleva WhatsApp ni mail de la persona.
+//   El aviso lleva poco a propósito: nombre, origen y total. No lleva WhatsApp ni mail de la persona.
 //
 // Por qué conexión directa y no supabase-js: el schema `evento_caeia` no está expuesto a la API
 // (cambiar eso afectaría a CAEIA), así que se escribe con SQL directo y consultas parametrizadas.
 
 import postgres from 'npm:postgres@3.4.5'
 
-const TIPOS = ['Dueño de negocio', 'Emprendedor (o por arrancar)', 'Empleado/a o encargado/a', 'Contador/a', 'Otro']
+// El campo «Soy…» (columna `tipo`) se sacó el 2026-11-14: la función ya no lo pide ni lo guarda (la columna quedó opcional en la
+// tabla). Un navegador con la versión vieja de la página que todavía lo mande simplemente se ignora.
 const FACTURAS = ['No facturo', 'Menos de 10', 'Entre 10 y 50', 'Más de 50']
 const COMO = [
   'Desde el portal de ARCA',
@@ -92,7 +93,7 @@ async function sha256(text: string): Promise<string> {
 }
 
 /** Le avisa a Axel por mail que hay una inscripción nueva. Nunca rompe la inscripción: si algo falla, solo lo registra. */
-async function avisarInscripcion(nombre: string, tipo: string, origen: string | null) {
+async function avisarInscripcion(nombre: string, origen: string | null) {
   if (!RESEND_API_KEY || !NOTIFY_EMAIL) return
   try {
     const [{ n }] = await sql<{ n: number }[]>`select count(*)::int as n from evento_caeia.inscripciones`
@@ -102,7 +103,6 @@ async function avisarInscripcion(nombre: string, tipo: string, origen: string | 
       esHito(n) ? `Llegaste a ${n} inscriptos.` : 'Se anotó una persona nueva.',
       '',
       `Nombre: ${nombre}`,
-      `Tipo: ${tipo}`,
       `Origen del link: ${origen ?? 'sin origen'}`,
       `Total de inscriptos: ${n}`,
     ].join('\n')
@@ -143,7 +143,6 @@ Deno.serve(async (req) => {
   const nombre = clean(b.nombre, 120)
   const whatsapp = clean(b.whatsapp, 20).replace(/\s/g, '')
   const email = clean(b.email, 254).toLowerCase()
-  const tipo = clean(b.tipo, 40)
   const rubro = clean(b.rubro, 120) || null
   const facturas = clean(b.facturas, 40)
   const como = clean(b.como, 60)
@@ -156,7 +155,6 @@ Deno.serve(async (req) => {
   if (nombre.length < 2) problemas.push('nombre')
   if (!/^\+54\d{10}$/.test(whatsapp)) problemas.push('whatsapp')
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) problemas.push('email')
-  if (!TIPOS.includes(tipo)) problemas.push('tipo')
   if (facturas && !FACTURAS.includes(facturas)) problemas.push('facturas')
   if (como && !COMO.includes(como)) problemas.push('como')
   if (b.consentimiento !== true) problemas.push('consentimiento')
@@ -180,10 +178,10 @@ Deno.serve(async (req) => {
     //     (así nadie puede averiguar quién está anotado). ---
     const filas = await sql<{ encuesta_token: string }[]>`
       insert into evento_caeia.inscripciones
-        (nombre, whatsapp, email, tipo, rubro, facturas_por_mes, como_factura_hoy, tarea_repetitiva,
+        (nombre, whatsapp, email, rubro, facturas_por_mes, como_factura_hoy, tarea_repetitiva,
          origen, consentimiento, consentimiento_texto)
       values
-        (${nombre}, ${whatsapp}, ${email}, ${tipo}, ${rubro}, ${facturas || null}, ${como || null}, ${tarea},
+        (${nombre}, ${whatsapp}, ${email}, ${rubro}, ${facturas || null}, ${como || null}, ${tarea},
          ${origen}, true, ${consentimientoTexto})
       on conflict do nothing
       returning encuesta_token`
@@ -192,7 +190,7 @@ Deno.serve(async (req) => {
     // corresponde a ninguna fila: así la respuesta es idéntica y nadie puede averiguar quién está anotado.
     const token = filas[0]?.encuesta_token ?? crypto.randomUUID()
     // Solo si la inscripción es nueva (un duplicado no se guarda y no avisa). Se responde igual de rápido: el aviso corre aparte.
-    if (filas[0]) EdgeRuntime.waitUntil(avisarInscripcion(nombre, tipo, origen))
+    if (filas[0]) EdgeRuntime.waitUntil(avisarInscripcion(nombre, origen))
     return reply(200, { ok: true, token }, origin)
   } catch (err) {
     // Nunca se registran los datos de la persona, solo el tipo de error.

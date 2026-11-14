@@ -45,13 +45,22 @@ export function initPixel() {
   fbq.version = '2.0'
   fbq.queue = []
 
+  fbq('init', content.analytics.metaPixelId)
+  fbq('track', 'PageView')
+}
+
+/**
+ * Descarga el script de Meta (fbevents.js). Se llama aparte de `initPixel` a propósito: `initPixel` deja lista la cola de eventos
+ * al instante (cuesta nada) y esto se posterga hasta que la página ya es usable (ver `afterLoadIdle` en main.tsx), porque
+ * fbevents.js y su configuración bloquean ~1,4 s el celular al arrancar. Todo lo que pase antes (PageView, clics) queda en la
+ * cola y Meta lo recibe cuando el script termina de cargar: no se pierde ningún evento.
+ */
+export function loadPixelScript() {
+  if (!enabled() || document.querySelector('script[src*="fbevents.js"]')) return
   const script = document.createElement('script')
   script.async = true
   script.src = 'https://connect.facebook.net/en_US/fbevents.js'
   document.head.appendChild(script)
-
-  fbq('init', content.analytics.metaPixelId)
-  fbq('track', 'PageView')
 }
 
 /** Avisa a Meta que alguien completó la inscripción (evento estándar «Lead»). Sin datos personales. */
@@ -75,14 +84,22 @@ export function trackStep(name: string, params?: Record<string, string>) {
  *   VerFormulario       → el formulario entró en pantalla (una vez por visita)
  *   ClicQuieroMiLugar   → tocó cualquier botón que lleva al formulario (con `lugar`: cronometro, hero, boton_fijo o seccion)
  *   EmpezoFormulario    → tocó el primer campo (una vez por visita)
- * Los otros dos pasos («CartelAtencion» y «CartelNoIre») se mandan desde RegistrationForm.tsx.
+ *   ClicGrupoWhatsApp   → tocó el botón grande de unirse al grupo de WhatsApp (pantalla después de anotarse)
+ * «EnvioFormulario» (datos completos y válidos, se intenta guardar) se manda desde RegistrationForm.tsx, y «Lead» cuando se guardó.
+ * (El cartel «¡Atención!» y sus eventos «CartelAtencion» y «CartelNoIre» se sacaron el 2026-11-14.)
  * Se engancha al documento (no a cada botón), así que sirve aunque cambien los botones o el copy.
  */
 export function initFunnelTracking() {
   if (!enabled()) return
 
   document.addEventListener('click', (ev) => {
-    const link = (ev.target as Element | null)?.closest?.('a[href="#inscripcion"]')
+    const target = ev.target as Element | null
+    // El botón del grupo de WhatsApp (pantalla de confirmación o botón fijo de celular).
+    if (target?.closest?.('a.done__wa, a.btn--wa')) {
+      trackStep('ClicGrupoWhatsApp')
+      return
+    }
+    const link = target?.closest?.('a[href="#inscripcion"]')
     if (!link) return
     const lugar = link.closest('.countdown')
       ? 'cronometro'

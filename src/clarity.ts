@@ -14,14 +14,22 @@ function enabled(): boolean {
   return Boolean(content.analytics.clarityId) && !import.meta.env.DEV && host !== 'localhost' && host !== '127.0.0.1'
 }
 
-/** Carga Clarity. Se llama una sola vez al abrir la página. */
+// Clarity se carga cuando la página ya es usable (ver `afterLoadIdle` en main.tsx). Los pasos del embudo que ocurran antes
+// se guardan acá y se marcan en la grabación apenas Clarity arranca.
+let started = false
+const pending: string[] = []
+
+/** Carga Clarity. Se llama una sola vez, cuando la página ya es usable. */
 export function initClarity() {
-  if (!enabled()) return
+  if (!enabled() || started) return
+  started = true
   Clarity.init(content.analytics.clarityId)
+  pending.splice(0).forEach((name) => Clarity.event(name))
 }
 
 /** Marca un paso del embudo en la grabación, para poder filtrar sesiones (por ejemplo, «tocó el botón pero no se inscribió»). */
 export function clarityEvent(name: string) {
   if (!enabled()) return
-  Clarity.event(name)
+  if (started) Clarity.event(name)
+  else pending.push(name)
 }
