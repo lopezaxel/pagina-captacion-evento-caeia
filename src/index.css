@@ -1974,12 +1974,70 @@ select option {
   background: rgba(10, 14, 26, 0.72);
   -webkit-backdrop-filter: blur(16px) saturate(170%);
   backdrop-filter: blur(16px) saturate(170%);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(196, 181, 253, 0.55);
+  box-shadow: 0 -10px 36px rgba(139, 92, 246, 0.35);
   transform: translateY(110%);
   transition: transform 0.3s ease;
 }
 .sticky--on {
   transform: none;
+}
+/* Botón fijo llamativo (2026-11-14): más alto que el común y con una pulsación suave (solo transform: no pesa). */
+.btn--sticky {
+  height: 60px;
+  font-size: 19px;
+  animation: cta-breathe 2.4s ease-in-out infinite;
+}
+@keyframes cta-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.035);
+  }
+}
+
+/* ---------- Pantalla completa del grupo de WhatsApp (después de anotarse) ----------
+   Tapa toda la página y no se puede cerrar: la persona tiene que tocar el botón del grupo (ver JoinGroupOverlay.tsx). */
+.join {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 24px 18px calc(24px + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  text-align: center;
+  background:
+    radial-gradient(80% 50% at 50% 0%, rgba(139, 92, 246, 0.55), rgba(139, 92, 246, 0) 100%),
+    radial-gradient(70% 40% at 50% 100%, rgba(37, 211, 102, 0.22), rgba(37, 211, 102, 0) 100%),
+    linear-gradient(160deg, #1e1550 0%, #090c22 100%);
+  animation: join-in 0.25s ease both;
+}
+@keyframes join-in {
+  from {
+    opacity: 0;
+  }
+}
+.join__box {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  width: min(100%, 520px);
+}
+.join h2 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 8vw, 40px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+.join__hint {
+  font-size: 15px;
+  color: #dbe1f5;
 }
 
 /* ---------- Aparición al scrollear ---------- */
@@ -2197,6 +2255,10 @@ select option {
   .btn--submit::after,
   .done__wa::before {
     display: none;
+  }
+  .btn--sticky,
+  .join {
+    animation: none;
   }
   .sticky,
   .btn {

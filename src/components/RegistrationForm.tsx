@@ -64,6 +64,16 @@ function validate(v: Values): Errors {
   return errors
 }
 
+/**
+ * Marca la inscripción como hecha y deja la tarjeta de confirmación centrada en pantalla. El formulario es mucho más alto que la
+ * confirmación: sin esto, al achicarse la página todo lo de abajo sube y la pantalla «salta» (se vio en un celular real).
+ * Salto instantáneo y no animado, para que no se note.
+ */
+function finishRegistration(nombre: string, id: string) {
+  markRegistered(nombre)
+  window.requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ block: 'center', behavior: 'instant' }))
+}
+
 /** Resalta lo que va entre *asteriscos* como con marcador. */
 function Marked({ text, cls }: { text: string; cls: string }) {
   return (
@@ -127,7 +137,7 @@ export function RegistrationForm({ id }: { id: string }) {
         })
         window.setTimeout(() => {
           setStatus('idle')
-          markRegistered(values.nombre.trim())
+          finishRegistration(values.nombre.trim(), id)
         }, 700)
       } else {
         setSendError(f.errors.send)
@@ -155,7 +165,7 @@ export function RegistrationForm({ id }: { id: string }) {
       if (res.ok) {
         trackLead() // Le avisa a Meta que alguien se inscribió (sin datos personales), para medir los anuncios.
         setStatus('idle')
-        markRegistered(values.nombre.trim())
+        finishRegistration(values.nombre.trim(), id)
         return
       }
       setSendError(res.status === 429 ? f.errors.tooMany : f.errors.send)

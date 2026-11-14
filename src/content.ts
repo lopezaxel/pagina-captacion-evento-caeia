@@ -352,6 +352,8 @@ export const content = {
       text: 'Te esperamos el {fecha}, {hora} hs, en {lugar}.',
       mustJoin: 'Tenés que entrar al grupo de WhatsApp sí o sí: ahí te avisamos todo lo del evento.',
       whatsapp: 'Unirme al grupo de WhatsApp',
+      // Aviso chico en la pantalla completa que bloquea la página hasta que se toca el botón (pedido de Axel, 2026-11-14).
+      overlayHint: 'Tocá el botón para entrar al grupo. Después podés seguir viendo la página.',
       whatsappNote: 'Tu número será visible para los otros integrantes. El grupo se elimina después del evento.',
     },
   },

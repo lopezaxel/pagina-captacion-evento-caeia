@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { eventJsonLd } from './lib'
 import { Agenda, Closing, Facts, Faq, Footer, ForYou, Hero, Organizers, Problem, Signup, SignupTop, Venue, WhatYouSee } from './components/Sections'
 import { StickyCta } from './components/StickyCta'
+import { JoinGroupOverlay } from './components/JoinGroupOverlay'
 import { CountdownBar } from './components/CountdownBar'
 import { LegalPage } from './components/Legal'
 import { Backdrop } from './components/ui'
@@ -20,9 +21,9 @@ function useInView(id: string, threshold: number) {
 }
 
 function Landing() {
-  // El botón fijo de abajo (celular) se oculta cuando ya hay otro botón o el formulario a la vista.
-  const heroCtaInView = useInView('hero-cta', 0.6)
-  // Hay dos formularios (arriba y al final): el botón fijo se oculta cuando cualquiera de los dos está a la vista.
+  // El botón fijo de abajo (celular) está siempre a la vista mientras se scrollea (pedido de Axel, 2026-11-14), salvo cuando uno de
+  // los formularios está en pantalla: ahí taparía el botón de enviar y ya no hace falta.
+  // Hay dos formularios (arriba y al final): se oculta cuando cualquiera de los dos está a la vista.
   const signupTopInView = useInView('inscripcion', 0.2)
   const signupEndInView = useInView('inscripcion-final', 0.2)
 
@@ -46,7 +47,8 @@ function Landing() {
         <Signup />
       </main>
       <Footer />
-      <StickyCta visible={!heroCtaInView && !signupTopInView && !signupEndInView} />
+      <StickyCta visible={!signupTopInView && !signupEndInView} />
+      <JoinGroupOverlay />
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd(window.location.origin)) }} />
     </>
